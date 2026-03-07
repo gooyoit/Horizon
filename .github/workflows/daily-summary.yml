@@ -46,5 +46,5 @@ jobs:
           publish_dir: ./docs
           keep_files: true  # Keep existing summaries on gh-pages branch
           commit_message: "📝 Daily Summary: ${{ env.DATE }}"
-          publish_branch: sub_github-pages
+          publish_branch: gh-pages
           enable_jekyll: true
