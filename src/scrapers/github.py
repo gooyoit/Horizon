@@ -23,7 +23,7 @@ class GitHubScraper(BaseScraper):
             http_client: Shared async HTTP client
         """
         super().__init__({"sources": sources}, http_client)
-        self.token = os.getenv("GITHUB_TOKEN")
+        self.token = os.getenv("GIT_HUB_TOKEN")
         self.base_url = "https://api.github.com"
 
     def _get_headers(self) -> dict:
