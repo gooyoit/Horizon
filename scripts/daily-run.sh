@@ -14,7 +14,7 @@ cd "$PROJECT_DIR"
 echo "$LOG_PREFIX Starting Horizon daily run..."
 
 # 1. Pull latest code
-git pull --quiet origin main
+git pull --quiet origin main 2>/dev/null || true
 
 # 2. Install/update dependencies
 uv sync --quiet
@@ -29,7 +29,19 @@ echo "$LOG_PREFIX Deploying to gh-pages..."
 TMPDIR=$(mktemp -d)
 trap "rm -rf $TMPDIR" EXIT
 
-git fetch origin gh-pages:gh-pages 2>/dev/null || git checkout --orphan gh-pages && git checkout main
+# Ensure gh-pages branch exists locally
+if ! git show-ref --verify --quiet refs/heads/gh-pages; then
+    # Local gh-pages doesn't exist, try to fetch from remote
+    if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+        git branch gh-pages origin/gh-pages
+    else
+        # Create orphan branch if remote doesn't exist either
+        git checkout --orphan gh-pages
+        git rm -rf . 2>/dev/null || true
+        git commit --allow-empty -m "Initial gh-pages"
+        git checkout -
+    fi
+fi
 
 git worktree add "$TMPDIR" gh-pages
 cp -r docs/* "$TMPDIR/"
