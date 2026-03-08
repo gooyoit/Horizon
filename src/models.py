@@ -14,6 +14,7 @@ class SourceType(str, Enum):
     REDDIT = "reddit"
     TELEGRAM = "telegram"
     PRODUCTHUNT = "producthunt"
+    WEIBO = "weibo"
 
 
 class ContentItem(BaseModel):
@@ -130,6 +131,13 @@ class ProductHuntConfig(BaseModel):
     fetch_limit: int = 10  # Number of top products to fetch
 
 
+class WeiboConfig(BaseModel):
+    """Weibo hot search configuration."""
+
+    enabled: bool = True
+    fetch_limit: int = 20  # Number of hot search items to fetch
+
+
 class SourcesConfig(BaseModel):
     """All sources configuration."""
 
@@ -139,6 +147,7 @@ class SourcesConfig(BaseModel):
     reddit: RedditConfig = Field(default_factory=RedditConfig)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
     producthunt: ProductHuntConfig = Field(default_factory=ProductHuntConfig)
+    weibo: WeiboConfig = Field(default_factory=WeiboConfig)
 
 
 class EmailConfig(BaseModel):

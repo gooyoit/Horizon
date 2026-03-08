@@ -18,6 +18,7 @@ from .scrapers.rss import RSSScraper
 from .scrapers.reddit import RedditScraper
 from .scrapers.telegram import TelegramScraper
 from .scrapers.producthunt import ProductHuntScraper
+from .scrapers.weibo import WeiboScraper
 from .ai.client import create_ai_client
 from .ai.analyzer import ContentAnalyzer
 from .ai.summarizer import DailySummarizer
@@ -216,6 +217,11 @@ class HorizonOrchestrator:
             if self.config.sources.producthunt.enabled:
                 producthunt_scraper = ProductHuntScraper(self.config.sources.producthunt, client)
                 tasks.append(self._fetch_with_progress("Product Hunt", producthunt_scraper, since))
+
+            # Weibo Hot Search
+            if self.config.sources.weibo.enabled:
+                weibo_scraper = WeiboScraper(self.config.sources.weibo, client)
+                tasks.append(self._fetch_with_progress("Weibo", weibo_scraper, since))
 
             # Fetch all concurrently
             results = await asyncio.gather(*tasks, return_exceptions=True)

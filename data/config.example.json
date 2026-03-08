@@ -77,6 +77,10 @@
     "producthunt": {
       "enabled": true,
       "fetch_limit": 10
+    },
+    "weibo": {
+      "enabled": true,
+      "fetch_limit": 20
     }
   },
   "filtering": {
