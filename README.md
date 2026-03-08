@@ -18,6 +18,7 @@
 ![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=google&logoColor=white)
 ![DeepSeek](https://img.shields.io/badge/DeepSeek-0A6DC2?style=flat-square)
 ![Doubao](https://img.shields.io/badge/Doubao-00D6C2?style=flat-square)
+![OpenClaw](https://img.shields.io/badge/OpenClaw-C83232?style=flat-square)
 
 Horizon collects news from multiple customizable sources, uses AI to score and filter them, and generates a daily briefing — complete with summaries, community discussions, and background explanations in both English and Chinese.
 
@@ -211,6 +212,7 @@ See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`s
 - [x] GitHub Pages deployment
 - [x] **Email Subscription** (SMTP/IMAP automated newsletter)
 - [x] **Docker deployment support**
+- [x] **MCP server integration**
 - [x] Web UI dashboard
 - [ ] Slack / Webhook notification
 - [ ] More source types (Twitter/X, Discord, etc.)

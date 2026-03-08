@@ -18,6 +18,7 @@
 ![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=google&logoColor=white)
 ![DeepSeek](https://img.shields.io/badge/DeepSeek-0A6DC2?style=flat-square)
 ![Doubao](https://img.shields.io/badge/Doubao-00D6C2?style=flat-square)
+![OpenClaw](https://img.shields.io/badge/OpenClaw-C83232?style=flat-square)
 
 Horizon 从多个可自定义的信息源中收集新闻，利用 AI 对新闻进行打分与过滤，最终生成一份包含摘要、社区讨论和背景知识的中英双语日报。
 
@@ -221,6 +222,7 @@ uv run horizon-mcp
 - [x] 社区讨论收集
 - [x] 邮件订阅（自动处理订阅/退订请求）
 - [x] **Docker 部署支持**
+- [x] **MCP Server 集成**
 - [x] GitHub Pages 部署
 - [x] Web UI 仪表板
 - [ ] Slack / Webhook 通知
