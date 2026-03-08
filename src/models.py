@@ -13,6 +13,7 @@ class SourceType(str, Enum):
     RSS = "rss"
     REDDIT = "reddit"
     TELEGRAM = "telegram"
+    PRODUCTHUNT = "producthunt"
 
 
 class ContentItem(BaseModel):
@@ -80,6 +81,7 @@ class RSSSourceConfig(BaseModel):
     url: HttpUrl
     enabled: bool = True
     category: Optional[str] = None
+    fetch_limit: Optional[int] = None  # 限制获取条目数量，None表示不限制
 
 
 class RedditSubredditConfig(BaseModel):
@@ -121,6 +123,13 @@ class TelegramConfig(BaseModel):
     channels: List[TelegramChannelConfig] = Field(default_factory=list)
 
 
+class ProductHuntConfig(BaseModel):
+    """Product Hunt source configuration."""
+
+    enabled: bool = True
+    fetch_limit: int = 10  # Number of top products to fetch
+
+
 class SourcesConfig(BaseModel):
     """All sources configuration."""
 
@@ -129,6 +138,7 @@ class SourcesConfig(BaseModel):
     rss: List[RSSSourceConfig] = Field(default_factory=list)
     reddit: RedditConfig = Field(default_factory=RedditConfig)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
+    producthunt: ProductHuntConfig = Field(default_factory=ProductHuntConfig)
 
 
 class EmailConfig(BaseModel):
