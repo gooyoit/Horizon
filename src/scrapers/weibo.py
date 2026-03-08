@@ -3,6 +3,7 @@
 import logging
 from datetime import datetime, timezone
 from typing import List
+from urllib.parse import quote
 import httpx
 
 from .base import BaseScraper
@@ -66,7 +67,7 @@ class WeiboScraper(BaseScraper):
 
                 # Construct search URL
                 # Web UI uses: https://s.weibo.com/weibo?q=%23TITLE%23&Refer=top
-                search_url = f"https://s.weibo.com/weibo?q={httpx._utils.quote(title)}&Refer=top"
+                search_url = f"https://s.weibo.com/weibo?q={quote(title)}&Refer=top"
 
                 # Generate unique ID
                 item_id = f"hot_{idx}_{hash(title)}"
