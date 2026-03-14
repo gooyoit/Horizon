@@ -1,19 +1,21 @@
 {
   "version": "1.0",
   "ai": {
-    "provider": "minimax",
-    "model": "MiniMax-M2.5",
-    "api_key_env": "MINIMAX_API_KEY",
+    "provider": "openai",
+    "model": "qwen3-max-2026-01-23",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "api_key_env": "OPENAI_API_KEY",
     "temperature": 0.3,
     "max_tokens": 8192,
     "languages": [
-      "zh"
+      "zh",
+      "en"
     ]
   },
   "wechat": {
     "enabled": false,
     "webhook_key_env": "WECHAT_WEBHOOK_KEY",
-    "webhook_url": "http://localhost:8001/api/v1/webhook/send?key={webhook_key}",
+    "webhook_url": "http://119.23.238.217:8001/api/v1/webhook/send?key={webhook_key}",
     "receivers": [
       {
         "type": "user",
