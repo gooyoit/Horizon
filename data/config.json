@@ -1,15 +1,13 @@
 {
   "version": "1.0",
   "ai": {
-    "provider": "openai",
-    "model": "qwen3-max-2026-01-23",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-    "api_key_env": "OPENAI_API_KEY",
+    "provider": "minimax",
+    "model": "MiniMax-M2.5",
+    "api_key_env": "MINIMAX_API_KEY",
     "temperature": 0.3,
     "max_tokens": 8192,
     "languages": [
-      "zh",
-      "en"
+      "zh"
     ]
   },
   "wechat": {
