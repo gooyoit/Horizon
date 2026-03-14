@@ -43,6 +43,7 @@ class AIProvider(str, Enum):
     OPENAI = "openai"
     GEMINI = "gemini"
     DOUBAO = "doubao"
+    MINIMAX = "minimax"
 
 
 class AIConfig(BaseModel):
