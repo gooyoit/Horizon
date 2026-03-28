@@ -88,14 +88,19 @@ class DailySummarizer:
         top_items = items[:max_items]
 
         title_lines = []
-        for i, item in enumerate(top_items):
+        for item in top_items:
             title = (
                 item.metadata.get(f"title_{language}")
                 or item.title
             )
-            title_lines.append(f"• {title}")
+            source = (
+                item.metadata.get("feed_name")
+                or item.metadata.get("subreddit", "unknown").replace("r/", "r/")
+                or item.source_type.value
+            )
+            title_lines.append(f"【{source}】{title}")
 
-        return "\n".join(title_lines)
+        return "\n\n".join(title_lines)
 
     async def generate_summary(
         self,
