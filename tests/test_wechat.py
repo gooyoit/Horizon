@@ -23,7 +23,7 @@ def wechat_config() -> WechatConfig:
         webhook_key_env="TEST_WEBHOOK_KEY",
         webhook_url="http://localhost:8001/api/v1/webhook/send",
         receivers=[
-            WechatReceiverConfig(type="user", name="test_user", id="user123"),
+            WechatReceiverConfig(type="friend", name="test_user", id="user123"),
             WechatReceiverConfig(
                 type="group",
                 name="test_group",
@@ -93,26 +93,26 @@ class TestBuildMessage:
 
     def test_single_user_receiver(self, wechat_notifier: WechatNotifier) -> None:
         """Test message with single user receiver."""
-        receivers = [WechatReceiverConfig(type="user", name="test_user", id="user123")]
+        receivers = [WechatReceiverConfig(type="friend", name="test_user", id="user123")]
         payload = wechat_notifier._build_message("test content", receivers)
 
         assert payload["msgtype"] == "text"
         assert payload["text"]["content"] == "test content"
-        assert payload["text"]["receiver_list"] == [
-            {"type": "user", "name": "test_user", "id": "user123"}
+        assert payload["text"]["targets"] == [
+            {"type": "friend", "name": "test_user", "id": "user123"}
         ]
 
     def test_multiple_user_receivers(self, wechat_notifier: WechatNotifier) -> None:
         """Test message with multiple user receivers."""
         receivers = [
-            WechatReceiverConfig(type="user", name="user1", id="id1"),
-            WechatReceiverConfig(type="user", name="user2", id="id2"),
+            WechatReceiverConfig(type="friend", name="user1", id="id1"),
+            WechatReceiverConfig(type="friend", name="user2", id="id2"),
         ]
         payload = wechat_notifier._build_message("test content", receivers)
 
-        assert payload["text"]["receiver_list"] == [
-            {"type": "user", "name": "user1", "id": "id1"},
-            {"type": "user", "name": "user2", "id": "id2"},
+        assert payload["text"]["targets"] == [
+            {"type": "friend", "name": "user1", "id": "id1"},
+            {"type": "friend", "name": "user2", "id": "id2"},
         ]
 
     def test_group_with_mentioned_list(self, wechat_notifier: WechatNotifier) -> None:
@@ -128,14 +128,14 @@ class TestBuildMessage:
         payload = wechat_notifier._build_message("test content", receivers)
 
         # Group includes mentioned_list
-        assert payload["text"]["receiver_list"] == [
+        assert payload["text"]["targets"] == [
             {"type": "group", "name": "test_group", "id": "group123", "mentioned_list": ["user1", "user2"]}
         ]
 
     def test_mixed_receivers(self, wechat_notifier: WechatNotifier) -> None:
         """Test mixed user and group receivers."""
         receivers = [
-            WechatReceiverConfig(type="user", name="user1", id="id1"),
+            WechatReceiverConfig(type="friend", name="user1", id="id1"),
             WechatReceiverConfig(
                 type="group",
                 name="group1",
@@ -145,9 +145,9 @@ class TestBuildMessage:
         ]
         payload = wechat_notifier._build_message("test content", receivers)
 
-        # receiver_list contains all receivers
-        assert payload["text"]["receiver_list"] == [
-            {"type": "user", "name": "user1", "id": "id1"},
+        # targets contains all receivers
+        assert payload["text"]["targets"] == [
+            {"type": "friend", "name": "user1", "id": "id1"},
             {"type": "group", "name": "group1", "id": "gid1", "mentioned_list": ["u1", "u2"]},
         ]
 
@@ -309,7 +309,7 @@ class TestSendNotification:
             webhook_key_env="WECHAT_WEBHOOK_KEY",
             webhook_url="http://localhost:8001/api/v1/webhook/send?key=",
             receivers=[
-                WechatReceiverConfig(type="user", name="张三", id="1234567890"),
+                WechatReceiverConfig(type="friend", name="张三", id="1234567890"),
                 WechatReceiverConfig(type="group", name="测试群", id="1234567890", mentioned_list=["@all"]),
             ],
         )

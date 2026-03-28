@@ -24,7 +24,7 @@
   },
   "wechat": {
     "enabled": false,
-    "webhook_key_env": "WECHAT_WEBHOOK_KEY",
+    "webhook_key": "WECHAT_WEBHOOK_KEY",
     "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={webhook_key}",
     "receivers": [
       {

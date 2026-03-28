@@ -167,7 +167,7 @@ class EmailConfig(BaseModel):
 
 class WechatReceiverConfig(BaseModel):
     """微信接收者配置"""
-    type: str = "user"  # "user" 或 "group"
+    type: str = "friend"  # "friend" 或 "group"
     name: str
     id: str
     mentioned_list: List[str] = Field(default_factory=list)  # 仅group类型使用

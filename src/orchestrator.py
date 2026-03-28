@@ -167,8 +167,15 @@ class HorizonOrchestrator:
                 # Send WeChat notification if configured
                 if self.wechat_notifier and self.config.wechat and self.config.wechat.enabled:
                     self.console.print(f"📱 Sending {lang.upper()} WeChat notification...")
-                    subject = f"Horizon Summary ({lang.upper()}) - {today}"
-                    await self.wechat_notifier.send_notification(summary, subject)
+                    subject = f"AI日报 ({lang.upper()}) - {today}"
+                    # Generate concise notification content from items (no regex on large summary)
+                    summarizer = DailySummarizer()
+                    notification_content = summarizer.generate_notification_content(
+                        important_items, today, language=lang
+                    )
+                    # Append link to daily summary page
+                    notification_content += f"\n\n---\n📖 查看详情: https://gooyoit.github.io/Horizon/{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
+                    await self.wechat_notifier.send_notification(notification_content, subject)
 
             self.console.print("[bold green]✅ Horizon completed successfully![/bold green]")
 
