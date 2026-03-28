@@ -5,7 +5,11 @@
     "model": "gpt-4",
     "api_key_env": "OPENAI_API_KEY",
     "temperature": 0.3,
-    "max_tokens": 4096
+    "max_tokens": 4096,
+    "languages": [
+      "zh",
+      "en"
+    ]
   },
   "email": {
     "enabled": true,
@@ -17,6 +21,24 @@
     "sender_name": "Horizon Daily",
     "subscribe_keyword": "SUBSCRIBE",
     "unsubscribe_keyword": "UNSUBSCRIBE"
+  },
+  "wechat": {
+    "enabled": false,
+    "webhook_key": "WECHAT_WEBHOOK_KEY",
+    "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={webhook_key}",
+    "receivers": [
+      {
+        "type": "user",
+        "name": "User Name",
+        "id": "user_id"
+      },
+      {
+        "type": "group",
+        "name": "Group Name",
+        "id": "group_id",
+        "mentioned_list": ["@all"]
+      }
+    ]
   },
   "sources": {
     "github": [
@@ -42,7 +64,8 @@
         "name": "Simon Willison",
         "url": "https://simonwillison.net/atom/everything/",
         "enabled": true,
-        "category": "ai-tools"
+        "category": "ai-tools",
+        "fetch_limit": 10
       },
       {
         "name": "LWN.net (subscriber full-text)",
@@ -72,6 +95,14 @@
         }
       ],
       "fetch_comments": 5
+    },
+    "producthunt": {
+      "enabled": true,
+      "fetch_limit": 10
+    },
+    "weibo": {
+      "enabled": true,
+      "fetch_limit": 20
     }
   },
   "filtering": {

@@ -63,6 +63,37 @@ class DailySummarizer:
     def __init__(self):
         pass
 
+    def generate_notification_content(
+        self,
+        items: List[ContentItem],
+        date: str,
+        language: str = "en",
+    ) -> str:
+        """Generate concise notification content with title list and URLs.
+
+        Args:
+            items: High-scoring content items
+            date: Date string (YYYY-MM-DD)
+            language: Output language ("en" or "zh")
+
+        Returns:
+            str: Concise notification content for WeChat/etc
+        """
+        if not items:
+            return "今日暂无重要动态"
+
+        title_lines = []
+        for i, item in enumerate(items):
+            title = (
+                item.metadata.get(f"title_{language}")
+                or item.title
+            )
+            url = str(item.url)
+            score = item.ai_score or "?"
+            title_lines.append(f"• {title}\n  {url} ⭐️{score}")
+
+        return "\n\n".join(title_lines)
+
     async def generate_summary(
         self,
         items: List[ContentItem],

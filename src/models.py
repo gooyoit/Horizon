@@ -13,6 +13,8 @@ class SourceType(str, Enum):
     RSS = "rss"
     REDDIT = "reddit"
     TELEGRAM = "telegram"
+    PRODUCTHUNT = "producthunt"
+    WEIBO = "weibo"
 
 
 class ContentItem(BaseModel):
@@ -82,6 +84,7 @@ class RSSSourceConfig(BaseModel):
     url: HttpUrl
     enabled: bool = True
     category: Optional[str] = None
+    fetch_limit: Optional[int] = None  # 限制获取条目数量，None表示不限制
 
 
 class RedditSubredditConfig(BaseModel):
@@ -123,6 +126,20 @@ class TelegramConfig(BaseModel):
     channels: List[TelegramChannelConfig] = Field(default_factory=list)
 
 
+class ProductHuntConfig(BaseModel):
+    """Product Hunt source configuration."""
+
+    enabled: bool = True
+    fetch_limit: int = 10  # Number of top products to fetch
+
+
+class WeiboConfig(BaseModel):
+    """Weibo hot search configuration."""
+
+    enabled: bool = True
+    fetch_limit: int = 20  # Number of hot search items to fetch
+
+
 class SourcesConfig(BaseModel):
     """All sources configuration."""
 
@@ -131,6 +148,8 @@ class SourcesConfig(BaseModel):
     rss: List[RSSSourceConfig] = Field(default_factory=list)
     reddit: RedditConfig = Field(default_factory=RedditConfig)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
+    producthunt: ProductHuntConfig = Field(default_factory=ProductHuntConfig)
+    weibo: WeiboConfig = Field(default_factory=WeiboConfig)
 
 
 class EmailConfig(BaseModel):
@@ -145,6 +164,22 @@ class EmailConfig(BaseModel):
     subscribe_keyword: str = "SUBSCRIBE"
     unsubscribe_keyword: str = "UNSUBSCRIBE"
     enabled: bool = False
+
+
+class WechatReceiverConfig(BaseModel):
+    """微信接收者配置"""
+    type: str = "friend"  # "friend" 或 "group"
+    name: str
+    id: str
+    mentioned_list: List[str] = Field(default_factory=list)  # 仅group类型使用
+
+
+class WechatConfig(BaseModel):
+    """微信 webhook 通知配置"""
+    enabled: bool = False
+    webhook_key_env: str = "WECHAT_WEBHOOK_KEY"  # 环境变量名
+    webhook_url: str  # 完整URL，必填
+    receivers: List[WechatReceiverConfig] = Field(default_factory=list)
 
 
 class FilteringConfig(BaseModel):
@@ -162,3 +197,4 @@ class Config(BaseModel):
     sources: SourcesConfig
     filtering: FilteringConfig
     email: Optional[EmailConfig] = None
+    wechat: Optional[WechatConfig] = None

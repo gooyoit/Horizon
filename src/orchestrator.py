@@ -12,11 +12,14 @@ from rich.console import Console
 from .models import Config, ContentItem
 from .storage.manager import StorageManager
 from .services.emailer import EmailManager
+from .services.wechat import WechatNotifier
 from .scrapers.github import GitHubScraper
 from .scrapers.hackernews import HackerNewsScraper
 from .scrapers.rss import RSSScraper
 from .scrapers.reddit import RedditScraper
 from .scrapers.telegram import TelegramScraper
+from .scrapers.producthunt import ProductHuntScraper
+from .scrapers.weibo import WeiboScraper
 from .ai.client import create_ai_client
 from .ai.analyzer import ContentAnalyzer
 from .ai.summarizer import DailySummarizer
@@ -38,6 +41,7 @@ class HorizonOrchestrator:
         self.storage = storage
         self.console = Console()
         self.email_manager = EmailManager(config.email, console=self.console) if config.email else None
+        self.wechat_notifier = WechatNotifier(config.wechat) if config.wechat else None
 
     async def run(self, force_hours: int = None) -> None:
         """Execute the complete workflow.
@@ -161,6 +165,19 @@ class HorizonOrchestrator:
                     subject = f"Horizon Summary ({lang.upper()}) - {today}"
                     self.email_manager.send_daily_summary(summary, subject, subscribers)
 
+                # Send WeChat notification if configured
+                if self.wechat_notifier and self.config.wechat and self.config.wechat.enabled:
+                    self.console.print(f"📱 Sending {lang.upper()} WeChat notification...")
+                    subject = f"AI日报 ({lang.upper()}) - {today}"
+                    # Generate concise notification content from items (no regex on large summary)
+                    summarizer = DailySummarizer()
+                    notification_content = summarizer.generate_notification_content(
+                        important_items, today, language=lang
+                    )
+                    # Append link to daily summary page
+                    notification_content += f"\n\n---\n📖 查看详情: https://gooyoit.github.io/Horizon/{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
+                    await self.wechat_notifier.send_notification(notification_content, subject)
+
             self.console.print("[bold green]✅ Horizon completed successfully![/bold green]")
             usage = get_usage_snapshot()
             if usage.total_tokens > 0:
@@ -227,6 +244,16 @@ class HorizonOrchestrator:
             if self.config.sources.telegram.enabled:
                 telegram_scraper = TelegramScraper(self.config.sources.telegram, client)
                 tasks.append(self._fetch_with_progress("Telegram", telegram_scraper, since))
+
+            # Product Hunt
+            if self.config.sources.producthunt.enabled:
+                producthunt_scraper = ProductHuntScraper(self.config.sources.producthunt, client)
+                tasks.append(self._fetch_with_progress("Product Hunt", producthunt_scraper, since))
+
+            # Weibo Hot Search
+            if self.config.sources.weibo.enabled:
+                weibo_scraper = WeiboScraper(self.config.sources.weibo, client)
+                tasks.append(self._fetch_with_progress("Weibo", weibo_scraper, since))
 
             # Fetch all concurrently
             results = await asyncio.gather(*tasks, return_exceptions=True)

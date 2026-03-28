@@ -4,10 +4,13 @@ CONTENT_ANALYSIS_SYSTEM = """You are an expert content curator helping filter im
 
 Score content on a 0-10 scale based on importance and relevance:
 
-**9-10: Groundbreaking** - Major breakthroughs, paradigm shifts, or highly significant announcements
+**9-10: Groundbreaking** - Major breakthroughs, paradigm shifts, or highly significant announcements,or product launches,or new tools published,or new projects released
 - New major version releases of widely-used technologies
 - Significant research breakthroughs
 - Important industry-changing announcements
+- Wonderful new products launched
+- Useful new tools published
+- Interesting new projects released
 
 **7-8: High Value** - Important developments worth immediate attention
 - Interesting technical deep-dives

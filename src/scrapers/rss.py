@@ -80,6 +80,9 @@ class RSSScraper(BaseScraper):
             # Parse feed
             feed = feedparser.parse(response.text)
 
+            # Collect items with their published_at for sorting
+            feed_items = []
+
             for entry in feed.entries:
                 # Parse published date
                 published_at = self._parse_date(entry)
@@ -108,7 +111,20 @@ class RSSScraper(BaseScraper):
                         "tags": [tag.term for tag in entry.get("tags", [])],
                     }
                 )
-                items.append(item)
+                feed_items.append((published_at, item))
+
+            # Sort by published_at descending (newest first)
+            feed_items.sort(key=lambda x: x[0], reverse=True)
+
+            # Apply fetch_limit if configured
+            if source.fetch_limit:
+                feed_items = feed_items[:source.fetch_limit]
+                logger.debug(
+                    "RSS feed %s: limited to %d items",
+                    source.name, source.fetch_limit
+                )
+
+            items = [item for _, item in feed_items]
 
         except httpx.HTTPError as e:
             logger.warning("Error fetching RSS feed %s: %s", source.name, e)

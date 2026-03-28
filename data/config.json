@@ -2,14 +2,31 @@
   "version": "1.0",
   "ai": {
     "provider": "openai",
-    "model": "deepseek-chat",
-    "base_url": "https://api.deepseek.com",
+    "model": "qwen3-max-2026-01-23",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
     "api_key_env": "OPENAI_API_KEY",
     "temperature": 0.3,
     "max_tokens": 8192,
     "languages": [
-      "zh",
-      "en"
+      "zh"
+    ]
+  },
+  "wechat": {
+    "enabled": true,
+    "webhook_key_env": "WECHAT_WEBHOOK_KEY",
+    "webhook_url": "http://119.23.238.217:8001/api/v1/webhook/send?key={webhook_key}",
+    "receivers": [
+      {
+        "type": "friend",
+        "name": "汉平",
+        "id": "user_id"
+      },
+      {
+        "type": "group",
+        "name": "A9计划冲冲冲",
+        "id": "group_id",
+        "mentioned_list": ["@all"]
+      }
     ]
   },
   "sources": {
@@ -43,6 +60,14 @@
       "fetch_top_stories": 10,
       "min_score": 200
     },
+    "producthunt": {
+      "enabled": true,
+      "fetch_limit": 10
+    },
+    "weibo": {
+      "enabled": true,
+      "fetch_limit": 20
+    },
     "rss": [
       {
         "name": "Simon Willison",
@@ -61,6 +86,57 @@
         "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
         "enabled": true,
         "category": "linux-kernel"
+      },
+      {
+        "name": "Long-Term Winning Index Investing",
+        "url": "https://wechat2rss.xlab.app/feed/1f35edb36dfda13906f958fc3047e59ce9c234fe.xml",
+        "enabled": false,
+        "category": "investment"
+      },
+      {
+        "name": "36kr",
+        "url": "https://www.36kr.com/feed",
+        "enabled": true,
+        "category": "tech-news",
+        "fetch_limit": 10
+      },
+      {
+        "name": "The Paper",
+        "url": "https://www.thepaper.cn/feed",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "zhihu",
+        "url": "https://www.zhihu.com/rss",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "ruanyifeng",
+        "url": "https://www.ruanyifeng.com/blog/atom.xml",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "V2EX",
+        "url": "https://v2ex.com/index.xml",
+        "enabled": true,
+        "category": "tech-news",
+        "fetch_limit": 10
+      },
+      {
+        "name": "huxiu",
+        "url": "https://www.huxiu.com/rss/0.xml",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "IT HOME",
+        "url": "https://www.ithome.com/rss/",
+        "enabled": true,
+        "category": "tech-news",
+        "fetch_limit": 20
       }
     ],
     "reddit": {
@@ -77,6 +153,54 @@
         {
           "subreddit": "LocalLLaMA",
           "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "SideProject",
+          "enabled": false,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "indiehackers",
+          "enabled": false,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "wallstreetbets",
+          "enabled": false,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "investing",
+          "enabled": false,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "CryptoCurrency",
+          "enabled": false,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 15,
+          "min_score": 60
+        },
+        {
+          "subreddit": "PersonalFinance",
+          "enabled": false,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 15,
