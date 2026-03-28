@@ -53,8 +53,8 @@ class WechatNotifier:
         Returns:
             Message payload dict
         """
-        # Build receiver_list
-        receiver_list = []
+        # Build targets
+        targets = []
         for receiver in receivers:
             receiver_item = {
                 "type": receiver.type,
@@ -63,14 +63,12 @@ class WechatNotifier:
             }
             if receiver.type == "group" and receiver.mentioned_list:
                 receiver_item["mentioned_list"] = receiver.mentioned_list
-            receiver_list.append(receiver_item)
+            targets.append(receiver_item)
 
         payload = {
             "msgtype": "text",
-            "text": {
-                "content": content,
-                "receiver_list": receiver_list
-            }
+            "content": content,
+            "targets": targets
         }
 
         return payload
