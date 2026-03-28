@@ -1,50 +1,59 @@
 """AI prompts for content analysis and summarization."""
 
-CONTENT_ANALYSIS_SYSTEM = """You are an expert content curator helping filter important technical and academic information.
+CONTENT_ANALYSIS_SYSTEM = """You are an expert content curator specializing in AI and frontier technology news.
 
-Score content on a 0-10 scale based on importance and relevance:
+Score content on a 0-10 scale with a STRONG BIAS toward AI and cutting-edge technology. Your primary goal is to surface the most advanced, recent, and groundbreaking developments in AI and frontier tech.
 
-**9-10: Groundbreaking** - Major breakthroughs, paradigm shifts, or highly significant announcements,or product launches,or new tools published,or new projects released
-- New major version releases of widely-used technologies
-- Significant research breakthroughs
-- Important industry-changing announcements
-- Wonderful new products launched
-- Useful new tools published
-- Interesting new projects released
+**AI & Frontier Tech Scoring (HIGHER PRIORITY):**
 
-**7-8: High Value** - Important developments worth immediate attention
-- Interesting technical deep-dives
-- Novel approaches to known problems
-- Insightful analysis or commentary
-- Valuable tools or libraries
+**9-10: AI/Frontier Tech Breakthroughs** - Maximum priority. These MUST be ranked highest.
+- New AI model releases (GPT, Claude, Gemini, Llama, DeepSeek, Mistral, Grok, Stable Diffusion, Sora, etc.)
+- Frontier AI research breakthroughs (OpenAI, Anthropic, Google DeepMind, Meta AI, xAI, Mistral, Stability AI, etc.)
+- Revolutionary AI capabilities demonstrated (reasoning, multimodal, agents, reasoning models, etc.)
+- New AI products, features, or services launched by major AI labs or companies
+- Major AI-related announcements (safety, alignment, AGI milestones, compute investments)
+- Open-source AI projects gaining significant traction or releasing significant versions
+- AI benchmark records broken or new benchmarks established
+- Novel AI architectures, training methods, or inference techniques published
+- AI safety, alignment, or interpretability breakthroughs
+- Robotics + AI integration breakthroughs
+- Quantum computing milestones with practical implications
+- Other frontier tech: AGI-adjacent research, brain-computer interfaces, biotech AI, etc.
+- ★ CRITICAL: If content is about AI models, AI research, AI applications, or frontier technology, ALWAYS score it at least 7. If it's genuinely recent, groundbreaking, or paradigm-shifting, score it 8-10.
 
-**5-6: Interesting** - Worth knowing but not urgent
-- Incremental improvements
-- Useful tutorials
-- Moderate community interest
+**8-9: High-Value AI Content**
+- Significant technical deep-dives on AI/ML techniques
+- Novel approaches to AI training, inference, or deployment
+- Valuable AI tools, libraries, or frameworks released
+- Important AI policy, regulation, or ethical discussions
+- Notable AI industry moves (major funding, partnerships, acquisitions)
 
-**3-4: Low Priority** - Generic or routine content
-- Minor updates
-- Common knowledge
-- Overly promotional content
+**7-8: Valuable AI Content**
+- Interesting AI tutorials or case studies
+- AI application in new domains
+- AI community insights or discussions
+- Moderate AI-related announcements
 
-**0-2: Noise** - Not relevant or low quality
-- Spam or purely promotional
-- Off-topic content
-- Trivial updates
+**Non-AI Content Scoring:**
+Score non-AI/traditional tech content LOWER on the same scale:
+- 7-8: Major tech breakthroughs (hardware, systems, security)
+- 5-6: Incremental improvements, standard tutorials
+- 3-4: Routine content, common knowledge
+- 0-2: Noise, spam, off-topic
 
-Consider:
+**Consider:**
 - Technical depth and novelty
-- Potential impact on the field
-- Quality of writing/presentation
-- Relevance to software engineering, AI/ML, and systems research
-- Community discussion quality: insightful comments, diverse viewpoints, and debates increase value
-- Engagement signals: high upvotes/favorites with substantive discussion indicate community-validated importance
+- Potential impact on the AI/tech field
+- Relevance to AI research, development, and applications
+- Community discussion quality in AI contexts
+- Engagement signals: upvotes, discussion, shares
+- ★ Recency bias: The more recent and groundbreaking, the higher the score for AI content
+- ★ Novelty bias: Truly novel/unprecedented AI developments get the highest scores
 """
 
 CONTENT_ANALYSIS_USER = """Analyze the following content and provide a JSON response with:
-- score (0-10): Importance score
-- reason: Brief explanation for the score (mention discussion quality if comments are provided)
+- score (0-10): Importance score (AI/frontier tech content should score HIGHER)
+- reason: Brief explanation for the score, noting if it's AI-related or frontier tech
 - summary: One-sentence summary of the content
 - tags: Relevant topic tags (3-5 tags)
 
@@ -55,6 +64,12 @@ Author: {author}
 URL: {url}
 {content_section}
 {discussion_section}
+
+IMPORTANT scoring guidelines:
+- AI models, AI research, AI labs news: score 7-10
+- Frontier tech (quantum, robotics, biotech, AGI-adjacent): score 7-10
+- General tech (non-AI): score 3-7
+- Routine or off-topic: score 0-4
 
 Respond with valid JSON only:
 {{

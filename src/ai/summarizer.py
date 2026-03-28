@@ -68,13 +68,15 @@ class DailySummarizer:
         items: List[ContentItem],
         date: str,
         language: str = "en",
+        max_items: int = 10,
     ) -> str:
-        """Generate concise notification content with title list and URLs.
+        """Generate concise notification content with top titles only.
 
         Args:
-            items: High-scoring content items
+            items: High-scoring content items (sorted by score descending)
             date: Date string (YYYY-MM-DD)
             language: Output language ("en" or "zh")
+            max_items: Maximum number of items to include (default 10)
 
         Returns:
             str: Concise notification content for WeChat/etc
@@ -82,17 +84,18 @@ class DailySummarizer:
         if not items:
             return "今日暂无重要动态"
 
+        # Only take top N items
+        top_items = items[:max_items]
+
         title_lines = []
-        for i, item in enumerate(items):
+        for i, item in enumerate(top_items):
             title = (
                 item.metadata.get(f"title_{language}")
                 or item.title
             )
-            url = str(item.url)
-            score = item.ai_score or "?"
-            title_lines.append(f"• {title}\n  {url} ⭐️{score}")
+            title_lines.append(f"• {title}")
 
-        return "\n\n".join(title_lines)
+        return "\n".join(title_lines)
 
     async def generate_summary(
         self,
