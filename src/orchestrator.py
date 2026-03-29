@@ -175,7 +175,8 @@ class HorizonOrchestrator:
                         important_items, today, language=lang
                     )
                     # Append link to daily summary page
-                    notification_content += f"\n\n---\n📖 查看详情: https://gooyoit.github.io/Horizon/{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
+                    summary_url = f"https://gooyoit.github.io/Horizon/{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
+                    notification_content += f"\n\n更多及详情 👉 {summary_url}"
                     await self.wechat_notifier.send_notification(notification_content, subject)
 
             self.console.print("[bold green]✅ Horizon completed successfully![/bold green]")
