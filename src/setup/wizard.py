@@ -19,7 +19,7 @@ from ..models import (
     TelegramConfig, TelegramChannelConfig,
 )
 from ..storage.manager import StorageManager
-from .presets import load_presets, match_domains, collect_sources_from_domains
+from .presets import load_presets, match_sources
 
 
 console = Console()
@@ -374,14 +374,13 @@ def main():
         console.print("[yellow]Skipping preset matching.[/yellow]")
         presets = {"domains": []}
 
-    matched = match_domains(interests, presets)
-    preset_sources = collect_sources_from_domains(matched)
+    matched_sources = match_sources(interests, presets)
+    preset_sources = [src for src, _ in matched_sources]
 
-    if matched:
-        matched_names = [d.get("name", d.get("id", "?")) for d, _ in matched]
-        console.print(f"[green]Matched domains: {', '.join(matched_names)}[/green]")
+    if matched_sources:
+        console.print(f"[green]Found {len(preset_sources)} matching sources[/green]")
     else:
-        console.print("[yellow]No preset domains matched — AI will try to recommend.[/yellow]")
+        console.print("[yellow]No preset sources matched — AI will try to recommend.[/yellow]")
 
     # Step 4: AI recommendations (optional)
     ai_sources = []

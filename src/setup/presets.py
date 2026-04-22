@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Tuple
 
 import httpx
 
+from .tag_aliases import get_tag_aliases
+
 
 API_BASE_URL = os.environ.get(
     "HORIZON_API_URL", "https://horizon1123.top"
@@ -198,6 +200,82 @@ def collect_sources_from_domains(
                 sources.append({**src, "origin": "preset"})
 
     return sources
+
+
+def _tag_matches_input(tag: str, tokens: set, input_lower: str) -> bool:
+    """Check if a tag (or any of its aliases) matches the user input."""
+    tag_lower = tag.lower()
+    if tag_lower in tokens or tag_lower in input_lower:
+        return True
+    for alias in get_tag_aliases(tag):
+        alias_lower = alias.lower()
+        if alias_lower in tokens or alias_lower in input_lower:
+            return True
+    return False
+
+
+def match_sources(
+    user_input: str,
+    presets: Dict,
+    threshold: float = 0.1,
+) -> List[Tuple[Dict, float]]:
+    """Match user interest description against individual sources.
+
+    Scores each source based on:
+    - Category keyword matches (+1.0 per keyword)
+    - Source tag matches (+0.5 per tag)
+    - Description word matches (+0.3 per word, min length 3)
+
+    Args:
+        user_input: Free-form user interest description (supports mixed languages).
+        presets: Loaded presets dictionary.
+        threshold: Minimum normalized score to include a source.
+
+    Returns:
+        List of (source_dict, score) tuples sorted by descending score.
+        Each source_dict has origin="preset" added.
+    """
+    tokens = set(user_input.lower().split())
+    input_lower = user_input.lower()
+
+    seen = set()
+    results = []
+
+    for domain in presets.get("domains", []):
+        domain_keywords = [k.lower() for k in domain.get("keywords", [])]
+        total_keywords = len(domain_keywords) or 1
+
+        category_score = sum(
+            1.0 for kw in domain_keywords
+            if kw in tokens or kw in input_lower
+        )
+
+        for src in domain.get("sources", []):
+            key = _source_unique_key(src)
+            if key in seen:
+                continue
+            seen.add(key)
+
+            tag_score = sum(
+                0.5 for tag in src.get("tags", [])
+                if _tag_matches_input(tag, tokens, input_lower)
+            )
+
+            description = src.get("description", "").lower()
+            desc_tokens = set(description.split())
+            desc_score = sum(
+                0.3 for token in tokens
+                if len(token) >= 3 and token in desc_tokens
+            )
+
+            raw_score = category_score + tag_score + desc_score
+            normalized = min(raw_score / total_keywords, 1.0)
+
+            if normalized >= threshold:
+                results.append(({**src, "origin": "preset"}, normalized))
+
+    results.sort(key=lambda x: x[1], reverse=True)
+    return results
 
 
 def _source_unique_key(source: Dict) -> str:
