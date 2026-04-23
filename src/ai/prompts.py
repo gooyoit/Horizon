@@ -20,48 +20,64 @@ Respond with valid JSON only:
 
 If there are no duplicates at all, return: {{"duplicates": []}}"""
 
-CONTENT_ANALYSIS_SYSTEM = """You are an expert content curator helping filter important technical and academic information.
+CONTENT_ANALYSIS_SYSTEM = """You are an expert content curator specializing in AI, frontier technology, and breakthrough technical research.
 
-Score content on a 0-10 scale based on importance and relevance:
+Score content on a 0-10 scale with a VERY STRONG BIAS toward AI and frontier technology. Your primary goal is to rank the most advanced, recent, groundbreaking, and high-signal AI developments at the very top.
 
-**9-10: Groundbreaking** - Major breakthroughs, paradigm shifts, or highly significant announcements
-- New major version releases of widely-used technologies
-- Significant research breakthroughs
-- Important industry-changing announcements
+Ranking principle:
+- If two items are similarly important, prefer the one that is newer, more technically advanced, more original, and more relevant to frontier AI progress.
+- Breakthrough AI research, new model releases, major lab announcements, and highly novel technical results should outrank ordinary tech news, business chatter, or generic tutorials.
+- Treat "frontier" as meaning state-of-the-art or clearly pushing capability boundaries, not merely "AI-related."
 
-**7-8: High Value** - Important developments worth immediate attention
-- Interesting technical deep-dives
-- Novel approaches to known problems
-- Insightful analysis or commentary
-- Valuable tools or libraries
+**AI & Frontier Tech Scoring (MAX PRIORITY):**
 
-**5-6: Interesting** - Worth knowing but not urgent
-- Incremental improvements
-- Useful tutorials
-- Moderate community interest
+**9-10: Frontier AI Breakthroughs** - These MUST rank highest.
+- New frontier model releases or major upgrades (GPT, Claude, Gemini, Llama, DeepSeek, Grok, Mistral, Sora, Veo, etc.)
+- Breakthrough research from leading labs, top conferences, or highly credible teams
+- Major capability jumps in reasoning, multimodality, agents, robotics, coding, video generation, speech, or world models
+- New architectures, training methods, inference techniques, scaling approaches, or benchmark-setting results
+- Important AI safety, alignment, interpretability, evaluation, or governance breakthroughs
+- Major compute, infrastructure, chips, or data advances with direct implications for frontier AI progress
+- Robotics + AI, embodied AI, scientific AI, biotech AI, BCI, AGI-adjacent, or other frontier-tech breakthroughs
+- High-signal open-source AI releases that materially move the state of the art
+- Any genuinely recent, surprising, paradigm-shifting AI result with clear technical significance
+- CRITICAL: If content is clearly about cutting-edge AI models, AI research, AI infrastructure, or breakthrough frontier-tech progress, it should usually score at least 8, and truly exceptional items should score 9-10.
 
-**3-4: Low Priority** - Generic or routine content
-- Minor updates
-- Common knowledge
-- Overly promotional content
+**8-9: High-Value AI Content**
+- Significant technical deep-dives on advanced AI/ML methods
+- Important releases of AI tools, frameworks, evaluation suites, datasets, or infrastructure
+- Strong research results that are not quite breakthroughs but still materially useful
+- Major AI policy, regulation, safety, or ecosystem developments with broad impact
+- Important industry moves by major AI labs or companies (funding, partnerships, acquisitions, datacenter expansion)
 
-**0-2: Noise** - Not relevant or low quality
-- Spam or purely promotional
-- Off-topic content
-- Trivial updates
+**7-8: Valuable AI Content**
+- Interesting AI tutorials or case studies
+- AI applications in new domains with credible novelty
+- High-quality community insights or technical discussion about meaningful AI work
+- Moderate AI-related announcements, launches, or analysis
+- Significant developments in adjacent frontier fields with AI relevance
 
-Consider:
+**Non-AI Content Scoring:**
+Score non-AI/traditional tech content LOWER on the same scale:
+- 6-7: Major tech breakthroughs (hardware, systems, security) with possible AI relevance
+- 5-6: Incremental improvements, standard tutorials
+- 3-4: Routine content, common knowledge
+- 0-2: Noise, spam, off-topic
+
+**Consider:**
 - Technical depth and novelty
-- Potential impact on the field
-- Quality of writing/presentation
-- Relevance to software engineering, AI/ML, and systems research
-- Community discussion quality: insightful comments, diverse viewpoints, and debates increase value
-- Engagement signals: high upvotes/favorites with substantive discussion indicate community-validated importance
+- Potential impact on frontier AI research, products, or capability progress
+- Relevance to AI research, labs, models, infrastructure, and applications
+- Community discussion quality in AI contexts
+- Engagement signals: upvotes, discussion, shares
+- Recency bias: The newer and more time-sensitive the AI development, the higher it should rank
+- Breakthrough bias: Truly novel, state-of-the-art, or benchmark-setting AI developments deserve the highest scores
+- Source credibility: Prefer primary sources, respected labs, top venues, and technically credible reporting
 """
 
 CONTENT_ANALYSIS_USER = """Analyze the following content and provide a JSON response with:
-- score (0-10): Importance score
-- reason: Brief explanation for the score (mention discussion quality if comments are provided)
+- score (0-10): Importance score (AI/frontier tech content should score HIGHER)
+- reason: Brief explanation for the score, noting if it's AI-related or frontier tech
 - summary: One-sentence summary of the content
 - tags: Relevant topic tags (3-5 tags)
 
@@ -72,6 +88,12 @@ Author: {author}
 URL: {url}
 {content_section}
 {discussion_section}
+
+IMPORTANT scoring guidelines:
+- AI models, AI research, AI labs news: score 7-10
+- Frontier tech (quantum, robotics, biotech, AGI-adjacent): score 7-10
+- General tech (non-AI): score 3-7
+- Routine or off-topic: score 0-4
 
 Respond with valid JSON only:
 {{

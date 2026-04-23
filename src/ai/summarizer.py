@@ -63,6 +63,41 @@ class DailySummarizer:
     def __init__(self):
         pass
 
+    def generate_notification_content(
+        self,
+        items: List[ContentItem],
+        date: str,
+        language: str = "en",
+        max_items: int = 10,
+    ) -> str:
+        """Generate concise notification content with top titles only.
+
+        Args:
+            items: High-scoring content items (sorted by score descending)
+            date: Date string (YYYY-MM-DD)
+            language: Output language ("en" or "zh")
+            max_items: Maximum number of items to include (default 10)
+
+        Returns:
+            str: Concise notification content for WeChat/etc
+        """
+        if not items:
+            return "今日暂无重要动态"
+
+        # Only take top N items
+        top_items = items[:max_items]
+
+        title_lines = []
+        for item in top_items:
+            title = (
+                item.metadata.get(f"title_{language}")
+                or item.title
+            )
+            source = self._source_label(item)
+            title_lines.append(f"【{source}】{title}")
+
+        return "\n\n".join(title_lines)
+
     async def generate_summary(
         self,
         items: List[ContentItem],
@@ -139,12 +174,7 @@ class DailySummarizer:
         # Source line with parts joined by " · ", link appended at end
         source_type = item.source_type.value
         source_parts = [source_type]
-        if meta.get("subreddit"):
-            source_parts.append(f"r/{meta['subreddit']}")
-        if meta.get("feed_name"):
-            source_parts.append(meta["feed_name"])
-        else:
-            source_parts.append(item.author or "unknown")
+        source_parts.append(self._source_label(item))
         if item.published_at:
             day = item.published_at.strftime("%d").lstrip("0")
             source_parts.append(item.published_at.strftime(f"%b {day}, %H:%M"))
@@ -184,6 +214,29 @@ class DailySummarizer:
         lines.append("---")
 
         return "\n".join(lines) + "\n\n"
+
+    @staticmethod
+    def _source_label(item: ContentItem) -> str:
+        """Return a readable source label for notifications and summaries."""
+        meta = item.metadata
+
+        subreddit = meta.get("subreddit")
+        if subreddit:
+            return f"r/{str(subreddit).removeprefix('r/')}"
+
+        if meta.get("feed_name"):
+            return str(meta["feed_name"])
+
+        if meta.get("channel"):
+            return f"@{meta['channel']}"
+
+        if meta.get("repo"):
+            return str(meta["repo"])
+
+        if item.author:
+            return str(item.author)
+
+        return item.source_type.value
 
     def _generate_empty_summary(self, date: str, total_fetched: int, labels: dict) -> str:
         """Generate summary when no high-scoring items were found."""
