@@ -84,7 +84,7 @@
       {
         "name": "LWN.net",
         "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
-        "enabled": true,
+        "enabled": false,
         "category": "linux-kernel"
       },
       {
@@ -115,7 +115,7 @@
       {
         "name": "ruanyifeng",
         "url": "https://www.ruanyifeng.com/blog/atom.xml",
-        "enabled": true,
+        "enabled": false,
         "category": "tech-news"
       },
       {

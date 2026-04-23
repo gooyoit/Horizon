@@ -93,11 +93,7 @@ class DailySummarizer:
                 item.metadata.get(f"title_{language}")
                 or item.title
             )
-            source = (
-                item.metadata.get("feed_name")
-                or item.metadata.get("subreddit", "unknown").replace("r/", "r/")
-                or item.source_type.value
-            )
+            source = self._source_label(item)
             title_lines.append(f"【{source}】{title}")
 
         return "\n\n".join(title_lines)
@@ -178,12 +174,7 @@ class DailySummarizer:
         # Source line with parts joined by " · ", link appended at end
         source_type = item.source_type.value
         source_parts = [source_type]
-        if meta.get("subreddit"):
-            source_parts.append(f"r/{meta['subreddit']}")
-        if meta.get("feed_name"):
-            source_parts.append(meta["feed_name"])
-        else:
-            source_parts.append(item.author or "unknown")
+        source_parts.append(self._source_label(item))
         if item.published_at:
             day = item.published_at.strftime("%d").lstrip("0")
             source_parts.append(item.published_at.strftime(f"%b {day}, %H:%M"))
@@ -223,6 +214,29 @@ class DailySummarizer:
         lines.append("---")
 
         return "\n".join(lines) + "\n\n"
+
+    @staticmethod
+    def _source_label(item: ContentItem) -> str:
+        """Return a readable source label for notifications and summaries."""
+        meta = item.metadata
+
+        subreddit = meta.get("subreddit")
+        if subreddit:
+            return f"r/{str(subreddit).removeprefix('r/')}"
+
+        if meta.get("feed_name"):
+            return str(meta["feed_name"])
+
+        if meta.get("channel"):
+            return f"@{meta['channel']}"
+
+        if meta.get("repo"):
+            return str(meta["repo"])
+
+        if item.author:
+            return str(item.author)
+
+        return item.source_type.value
 
     def _generate_empty_summary(self, date: str, total_fetched: int, labels: dict) -> str:
         """Generate summary when no high-scoring items were found."""
