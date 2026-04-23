@@ -88,7 +88,7 @@ class DailySummarizer:
         top_items = items[:max_items]
 
         title_lines = []
-        for i, item in enumerate(top_items, 1):
+        for item in top_items:
             title = (
                 item.metadata.get(f"title_{language}")
                 or item.title
@@ -98,7 +98,7 @@ class DailySummarizer:
                 or item.metadata.get("subreddit", "unknown").replace("r/", "r/")
                 or item.source_type.value
             )
-            title_lines.append(f"{i}.【{source}】{title}")
+            title_lines.append(f"【{source}】{title}")
 
         return "\n\n".join(title_lines)
 
