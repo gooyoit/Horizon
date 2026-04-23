@@ -40,6 +40,20 @@
           "description_zh": "vLLM — 高吞吐量大模型推理引擎",
           "tags": ["llm", "inference"],
           "config": { "owner": "vllm-project", "repo": "vllm" }
+        },
+        {
+          "type": "rss",
+          "description": "QbitAI (量子位) — Chinese AI news and research coverage",
+          "description_zh": "量子位 — AI 资讯与前沿报道（微信公众号）",
+          "tags": ["ai", "news", "chinese"],
+          "config": { "name": "量子位", "url": "https://wechat2rss.xlab.app/feed/7131b577c61365cb47e81000738c10d872685908.xml", "category": "ai-news" }
+        },
+        {
+          "type": "rss",
+          "description": "AI新智元 — Chinese AI news, model releases and industry insights",
+          "description_zh": "新智元 — AI 资讯、模型发布与行业洞察（微信公众号）",
+          "tags": ["ai", "news", "chinese"],
+          "config": { "name": "新智元", "url": "https://wechat2rss.xlab.app/feed/ede30346413ea70dbef5d485ea5cbb95cca446e7.xml", "category": "ai-news" }
         }
       ]
     },

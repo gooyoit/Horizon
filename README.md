@@ -2,7 +2,7 @@
 
 # 🌅 Horizon
 
-**AI curates the tech news. You just read.**
+**Enjoy the News itself. Leave others to Horizon**
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
@@ -52,6 +52,8 @@ Horizon collects news from multiple customizable sources, uses AI to score and f
 
 ## Features
 
+> **🤝 Beyond a Cold AI Agent:** Designed with a "human touch". Build your personalized newsroom by deeply customizing feeds and sharing high-quality information sources via the [Horizon site](https://horizon1123.top/).
+
 - **📡 Multi-Source Aggregation** — Collects from Hacker News, RSS feeds, Reddit, Telegram channels, and GitHub (releases & user events)
 - **🤖 AI-Powered Scoring** — Uses Claude, GPT-4, Gemini, DeepSeek, Doubao, MiniMax, or any OpenAI-compatible API to rate each item 0-10, filtering out the noise
 - **🌐 Bilingual Summaries** — Generates daily reports in both English and Chinese
@@ -61,7 +63,7 @@ Horizon collects news from multiple customizable sources, uses AI to score and f
 - **📧 Email Subscription** — Self-hosted newsletter system (SMTP/IMAP) that handles "Subscribe" requests automatically
 - **📝 Static Site Generation** — Deploys as a GitHub Pages site via GitHub Actions, updated on a schedule
 - **⚙️ Fully Configurable** — Single JSON config file, easy to customize sources, thresholds, and AI providers
-- **🧙 Setup Wizard** — Interactive CLI that recommends sources based on your interests, with a [curated preset library](https://thysrael.github.io/Horizon/presets) open to community contributions
+- **🧙 Setup Wizard** — Interactive CLI that recommends sources based on your interests.
 
 ## How It Works
 
@@ -89,7 +91,7 @@ Horizon collects news from multiple customizable sources, uses AI to score and f
 
 ### 1. Install
 
-#### Option A: Local Installation
+**Option A: Local Installation**
 
 ```bash
 git clone https://github.com/Thysrael/Horizon.git
@@ -102,7 +104,7 @@ uv sync
 pip install -e .
 ```
 
-#### Option B: Docker
+**Option B: Docker**
 
 ```bash
 git clone https://github.com/Thysrael/Horizon.git
@@ -128,7 +130,7 @@ docker-compose run --rm horizon --hours 48
 uv run horizon-wizard
 ```
 
-The wizard asks about your interests (e.g. "LLM inference", "嵌入式", "web security") and auto-generates `data/config.json` from a [curated preset library](https://thysrael.github.io/Horizon/presets) + optional AI recommendations.
+The wizard asks about your interests (e.g. "LLM inference", "嵌入式", "web security") and auto-generates `data/config.json`.
 
 **Option B: Manual configuration**
 
@@ -227,7 +229,7 @@ See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`s
 - [x] **MCP server integration**
 - [x] Web UI dashboard
 - [x] **Setup Wizard** — interactive CLI that recommends sources based on user interests
-- [ ] **Improved Web UI** — better digest and article detail experience
+- [X] **Improved Web UI** — better digest and article detail experience
 - [ ] Slack / Webhook notification
 - [ ] More source types (Twitter/X, Discord, etc.)
 - [ ] Custom scoring prompts per source
@@ -236,15 +238,16 @@ See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`s
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
-### 📡 Contribute Source Presets
+### Contribute News
 
-Horizon's setup wizard uses a community-maintained [preset library](https://thysrael.github.io/Horizon/presets) to recommend sources. **We'd love your help expanding it!**
+Want to share valuable updates with the Horizon community? Please contribute news directly at **[horizon1123.top](https://horizon1123.top)**.
 
-1. Fork this repo
-2. Add your sources to `data/presets.json` (provide both English and Chinese descriptions)
-3. Submit a PR
+Great candidates: niche RSS discoveries, active subreddit trends, notable GitHub updates, or Telegram channel highlights in your area of expertise.
 
-Great candidates: niche RSS feeds, active subreddits, notable GitHub accounts, or Telegram channels in your area of expertise.
+## Acknowledgements
+
+- Special thanks to [LINUX.DO](https://linux.do/) for providing a promotion platform.
+- Special thanks to [HelloGitHub](https://hellogithub.com/) for valuable guidance and suggestions.
 
 ## License
 

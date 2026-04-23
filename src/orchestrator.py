@@ -1,7 +1,6 @@
 """Main orchestrator coordinating the entire workflow."""
 
 import asyncio
-import re
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict
@@ -94,7 +93,7 @@ class HorizonOrchestrator:
             )
 
             # 5.5 Semantic deduplication: drop items covering the same topic
-            deduped_items = self.merge_topic_duplicates(important_items)
+            deduped_items = await self.merge_topic_duplicates(important_items)
             if len(deduped_items) < len(important_items):
                 self.console.print(
                     f"🧹 Removed {len(important_items) - len(deduped_items)} topic duplicates "
@@ -364,63 +363,78 @@ class HorizonOrchestrator:
 
         return merged
 
-    @staticmethod
-    def _title_tokens(title: str) -> set:
-        tokens = set()
-        for w in re.findall(r'[a-zA-Z]{3,}', title):
-            tokens.add(w.lower())
-        cjk = re.sub(r'[^\u4e00-\u9fff]', '', title)
-        for i in range(len(cjk) - 1):
-            tokens.add(cjk[i:i + 2])
-        return tokens
-
-    @staticmethod
-    def _merge_item_content(primary: ContentItem, secondary: ContentItem) -> None:
-        """Append secondary's scraped content (comments) into primary."""
-        if not secondary.content:
-            return
-        if secondary.content in (primary.content or ""):
-            return
-        label = secondary.source_type.value
-        primary.content = (primary.content or "") + f"\n\n--- From {label} ---\n{secondary.content}"
-
-    def merge_topic_duplicates(
-        self, items: List[ContentItem], threshold: float = 0.33
-    ) -> List[ContentItem]:
-        """Merge items covering the same topic into the highest-scored one.
+    async def merge_topic_duplicates(self, items: List[ContentItem]) -> List[ContentItem]:
+        """Merge items covering the same topic using AI semantic deduplication.
 
         This is a stable stage helper for integrations such as MCP.
 
-        Two items are considered duplicates when either:
-          - Title token Jaccard >= threshold, or
-          - They share >= 2 ai_tags AND title Jaccard >= 0.15
-
-        Items must already be sorted by ai_score descending.
+        Sends all item titles, tags, and summaries to AI in a single call.
+        Items must already be sorted by ai_score descending so that the first
+        item in each duplicate group is always the highest-scored one.
         Content (comments) from duplicate items is merged into the primary.
+
+        Falls back to returning items unchanged if the AI call fails.
         """
-        kept: List[ContentItem] = []
-        for item in items:
-            tokens = self._title_tokens(item.title)
-            item_tags = set(item.ai_tags or [])
-            merged_into = None
-            for accepted in kept:
-                a_tokens = self._title_tokens(accepted.title)
-                union = a_tokens | tokens
-                title_sim = len(a_tokens & tokens) / len(union) if union else 0.0
-                tag_overlap = len(set(accepted.ai_tags or []) & item_tags)
-                if title_sim >= threshold or (tag_overlap >= 2 and title_sim >= 0.15):
-                    merged_into = accepted
-                    self.console.print(
-                        f"   [dim]dedup: title_sim={title_sim:.2f} tag_overlap={tag_overlap}[/dim]\n"
-                        f"   [dim]  keep : {accepted.title}[/dim]\n"
-                        f"   [dim]  merge: {item.title}[/dim]"
-                    )
-                    break
-            if merged_into is not None:
-                self._merge_item_content(merged_into, item)
-            else:
-                kept.append(item)
-        return kept
+        if len(items) <= 1:
+            return items
+
+        from .ai.prompts import TOPIC_DEDUP_SYSTEM, TOPIC_DEDUP_USER
+        from .ai.utils import parse_json_response
+
+        # Build the item list for the prompt
+        lines = []
+        for i, item in enumerate(items):
+            tags = ", ".join(item.ai_tags) if item.ai_tags else "—"
+            summary = item.ai_summary or "—"
+            lines.append(f"[{i}] {item.title}\n    Tags: {tags}\n    Summary: {summary}")
+        items_text = "\n\n".join(lines)
+
+        try:
+            ai_client = create_ai_client(self.config.ai)
+            response = await ai_client.complete(
+                system=TOPIC_DEDUP_SYSTEM,
+                user=TOPIC_DEDUP_USER.format(items=items_text),
+            )
+            result = parse_json_response(response)
+            if result is None:
+                self.console.print("[yellow]  dedup: could not parse AI response, skipping[/yellow]")
+                return items
+
+            duplicate_groups = result.get("duplicates", [])
+        except Exception as e:
+            self.console.print(f"[yellow]  dedup: AI call failed ({e}), skipping[/yellow]")
+            return items
+
+        if not duplicate_groups:
+            return items
+
+        # Build a set of indices to drop (all non-primary duplicates)
+        drop_indices: set[int] = set()
+        for group in duplicate_groups:
+            if not isinstance(group, list) or len(group) < 2:
+                continue
+            primary_idx = group[0]
+            if primary_idx < 0 or primary_idx >= len(items):
+                continue
+            primary = items[primary_idx]
+            for dup_idx in group[1:]:
+                if not isinstance(dup_idx, int) or dup_idx < 0 or dup_idx >= len(items):
+                    continue
+                if dup_idx == primary_idx:
+                    continue
+                dup = items[dup_idx]
+                # Merge comments/content from the duplicate into the primary
+                if dup.content:
+                    if not primary.content or dup.content not in primary.content:
+                        label = dup.source_type.value
+                        primary.content = (primary.content or "") + f"\n\n--- From {label} ---\n{dup.content}"
+                self.console.print(
+                    f"   [dim]dedup: keep [{primary_idx}] {primary.title}[/dim]\n"
+                    f"   [dim]       drop [{dup_idx}] {dup.title}[/dim]"
+                )
+                drop_indices.add(dup_idx)
+
+        return [item for i, item in enumerate(items) if i not in drop_indices]
 
     async def _enrich_important_items(self, items: List[ContentItem]) -> None:
         """Enrich items with background knowledge (2nd AI pass).

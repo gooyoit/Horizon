@@ -19,7 +19,7 @@ from ..models import (
     TelegramConfig, TelegramChannelConfig,
 )
 from ..storage.manager import StorageManager
-from .presets import load_presets, match_domains, collect_sources_from_domains
+from .presets import load_presets, match_sources
 
 
 console = Console()
@@ -361,21 +361,26 @@ def main():
     interests = get_interests()
 
     # Step 3: Preset library matching
-    console.print("\n[dim]Matching against preset source library...[/dim]")
+    console.print("\n[dim]Fetching preset source library...[/dim]")
     try:
-        presets = load_presets()
+        presets = load_presets(prefer_api=True)
+        offline = os.environ.get("HORIZON_OFFLINE", "").lower() in ("1", "true", "yes")
+        if offline:
+            console.print("[dim]Using local presets (offline mode)[/dim]")
+        else:
+            console.print("[dim]Loaded preset sources from API[/dim]")
     except FileNotFoundError:
-        console.print("[yellow]Presets file not found, skipping preset matching.[/yellow]")
+        console.print("[yellow]Could not fetch presets (offline and no local file).[/yellow]")
+        console.print("[yellow]Skipping preset matching.[/yellow]")
         presets = {"domains": []}
 
-    matched = match_domains(interests, presets)
-    preset_sources = collect_sources_from_domains(matched)
+    matched_sources = match_sources(interests, presets)
+    preset_sources = [src for src, _ in matched_sources]
 
-    if matched:
-        matched_names = [d.get("name", d.get("id", "?")) for d, _ in matched]
-        console.print(f"[green]Matched domains: {', '.join(matched_names)}[/green]")
+    if matched_sources:
+        console.print(f"[green]Found {len(preset_sources)} matching sources[/green]")
     else:
-        console.print("[yellow]No preset domains matched — AI will try to recommend.[/yellow]")
+        console.print("[yellow]No preset sources matched — AI will try to recommend.[/yellow]")
 
     # Step 4: AI recommendations (optional)
     ai_sources = []
