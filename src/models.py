@@ -175,6 +175,22 @@ class EmailConfig(BaseModel):
     enabled: bool = False
 
 
+class WechatReceiverConfig(BaseModel):
+    """微信接收者配置"""
+    type: str = "friend"  # "friend" 或 "group"
+    name: str
+    id: str
+    mentioned_list: List[str] = Field(default_factory=list)  # 仅group类型使用
+
+
+class WechatConfig(BaseModel):
+    """微信 webhook 通知配置"""
+    enabled: bool = False
+    webhook_key_env: str = "WECHAT_WEBHOOK_KEY"  # 环境变量名
+    webhook_url: str
+    receivers: List[WechatReceiverConfig] = Field(default_factory=list)
+
+
 class FilteringConfig(BaseModel):
     """Content filtering configuration."""
 
@@ -190,4 +206,5 @@ class Config(BaseModel):
     sources: SourcesConfig
     filtering: FilteringConfig
     email: Optional[EmailConfig] = None
+    wechat: Optional[WechatConfig] = None
     webhook: Optional[WebhookConfig] = None

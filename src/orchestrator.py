@@ -11,6 +11,7 @@ from rich.console import Console
 from .models import Config, ContentItem
 from .storage.manager import StorageManager
 from .services.emailer import EmailManager
+from .services.wechat import WechatNotifier
 from .services.webhook import WebhookNotifier
 from .scrapers.github import GitHubScraper
 from .scrapers.hackernews import HackerNewsScraper
@@ -40,6 +41,7 @@ class HorizonOrchestrator:
         self.storage = storage
         self.console = Console()
         self.email_manager = EmailManager(config.email, console=self.console) if config.email else None
+        self.wechat_notifier = WechatNotifier(config.wechat) if config.wechat else None
         self.webhook_notifier = (
             WebhookNotifier(config.webhook, console=self.console)
             if config.webhook and config.webhook.enabled
@@ -167,6 +169,21 @@ class HorizonOrchestrator:
                     subscribers = self.storage.load_subscribers()
                     subject = f"Horizon Summary ({lang.upper()}) - {today}"
                     self.email_manager.send_daily_summary(summary, subject, subscribers)
+
+                # Send WeChat notification if configured
+                if self.wechat_notifier and self.config.wechat and self.config.wechat.enabled:
+                    self.console.print(f"📱 Sending {lang.upper()} WeChat notification...")
+                    subject = f"AI日报 ({lang.upper()}) - {today}"
+                    summarizer = DailySummarizer()
+                    notification_content = summarizer.generate_notification_content(
+                        important_items, today, language=lang
+                    )
+                    summary_url = (
+                        f"https://gooyoit.github.io/Horizon/"
+                        f"{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
+                    )
+                    notification_content += f"\n\n更多及详情 👉 {summary_url}"
+                    await self.wechat_notifier.send_notification(notification_content, subject)
 
                 # Send webhook notification if configured
                 if self.webhook_notifier:
