@@ -61,6 +61,7 @@ Horizon collects news from multiple customizable sources, uses AI to score and f
 - **💬 Community Voices** — Collects and summarizes discussions from comments on HackerNews, Reddit, etc.
 - **🔗 Cross-Source Deduplication** — Merges duplicate items from different platforms automatically
 - **📧 Email Subscription** — Self-hosted newsletter system (SMTP/IMAP) that handles "Subscribe" requests automatically
+- **🔔 Webhook Notification** — Send results to Feishu, Slack, Discord, or any webhook endpoint with template rendering and truncation
 - **📝 Static Site Generation** — Deploys as a GitHub Pages site via GitHub Actions, updated on a schedule
 - **⚙️ Fully Configurable** — Single JSON config file, easy to customize sources, thresholds, and AI providers
 - **🧙 Setup Wizard** — Interactive CLI that recommends sources based on your interests.
@@ -216,6 +217,84 @@ Available tools include `hz_validate_config`, `hz_fetch_items`, `hz_score_items`
 
 See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`src/mcp/integration.md`](src/mcp/integration.md) for client setup.
 
+## Webhook Notification
+
+Horizon can push results to any webhook endpoint (Feishu/Lark, Slack, Discord, custom APIs, etc.) when the pipeline completes — both on success and failure.
+
+**Configuration:**
+
+- <details><summary>DingTalk</summary>
+
+  - DingTalk desktop -> Group settings -> Smart group assistant -> Add robot -> Custom
+  - Only check `Custom keywords`, the keyword must appear in the request_body content, e.g.: `Horizon`
+  - Enter the DingTalk robot's `Webhook URL` in the `.env` file under`HORIZON_WEBHOOK_URL`
+  - Enter the following request_body:
+    ```json
+    {
+        "msgtype": "markdown",
+        "markdown": {
+            "title": "Horizon #{date} Daily",
+            "text": "Horizon result: #{result}\n\n Horizon important items: #{important_items}/#{all_items}\n\n #{summary}"
+        }
+    }
+    ```
+  </details>
+- <details><summary>Feishu / Lark</summary>
+
+  - Feishu desktop -> Group settings -> Add robot -> Custom robot
+  - Only check `Custom keywords` in security settings, the keyword must appear in the request_body content, e.g.: `Horizon`
+  - Enter the Feishu robot's `Webhook URL` in the `.env` file under `HORIZON_WEBHOOK_URL`
+  - Enter the following request_body:
+    ```json
+    {
+      "msg_type": "interactive",
+      "card": {
+        "config": {
+          "wide_screen_mode": true
+        },
+        "header": {
+          "title": {
+            "tag": "plain_text",
+            "content": "Horizon #{date} Daily"
+          },
+          "template": "blue"
+        },
+        "elements": [
+          {
+            "tag": "markdown",
+            "content": "Horizon result: #{result}\nHorizon important items: #{important_items}/#{all_items}"
+          },
+          {
+            "tag": "hr"
+          },
+          {
+            "tag": "markdown",
+            "content": "#{summary?limit=200&split=---}"
+          }
+        ]
+      }
+    }
+    ```
+  </details>
+
+**Template variables:**
+
+| Variable | Description |
+|----------|-------------|
+| `#{date}` | Report date (e.g. `2026-04-24`) |
+| `#{language}` | Language code (`en` or `zh`) |
+| `#{important_items}` | Number of items that passed the score threshold |
+| `#{all_items}` | Total number of fetched items |
+| `#{result}` | `success` or `failed` |
+| `#{timestamp}` | Unix timestamp |
+| `#{summary}` | Full summary markdown |
+
+**Parameterized syntax:** `#{key?limit=N&split=DELIM}` truncates long values by splitting on `DELIM` and keeping segments until the total character count reaches `N`. Useful for platforms with message length limits.
+
+Example: `#{summary?limit=3000&split=---}` keeps enough `---`-separated sections to stay under 3000 characters.
+
+When `request_body` is a dict, special characters in `#{summary}` (quotes, newlines) are safely handled via JSON serialization. When it's a string, use `#{summary}` only with safe content (no unescaped quotes).
+
 ## Roadmap
 
 - [x] Multi-source aggregation (HN, RSS, Reddit, Telegram, GitHub)
@@ -229,8 +308,8 @@ See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`s
 - [x] **MCP server integration**
 - [x] Web UI dashboard
 - [x] **Setup Wizard** — interactive CLI that recommends sources based on user interests
+- [x] **Webhook Notification** — push results to Feishu, Slack, Discord, or any webhook endpoint
 - [X] **Improved Web UI** — better digest and article detail experience
-- [ ] Slack / Webhook notification
 - [ ] More source types (Twitter/X, Discord, etc.)
 - [ ] Custom scoring prompts per source
 

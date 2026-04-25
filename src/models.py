@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 from pydantic import BaseModel, HttpUrl, Field
 
 
@@ -152,6 +152,15 @@ class SourcesConfig(BaseModel):
     weibo: WeiboConfig = Field(default_factory=WeiboConfig)
 
 
+class WebhookConfig(BaseModel):
+    """Webhook notification configuration."""
+
+    url_env: Optional[str] = None          # Environment variable name containing the webhook URL
+    request_body: Optional[Union[str, dict, list]] = None  # POST body: real JSON object or string with #{key} placeholders; if empty, will use GET
+    headers: Optional[str] = None          # Custom headers, "Key: Value" per line
+    enabled: bool = False
+
+
 class EmailConfig(BaseModel):
     """Email configuration for updates/subscriptions."""
     imap_server: str
@@ -164,22 +173,6 @@ class EmailConfig(BaseModel):
     subscribe_keyword: str = "SUBSCRIBE"
     unsubscribe_keyword: str = "UNSUBSCRIBE"
     enabled: bool = False
-
-
-class WechatReceiverConfig(BaseModel):
-    """微信接收者配置"""
-    type: str = "friend"  # "friend" 或 "group"
-    name: str
-    id: str
-    mentioned_list: List[str] = Field(default_factory=list)  # 仅group类型使用
-
-
-class WechatConfig(BaseModel):
-    """微信 webhook 通知配置"""
-    enabled: bool = False
-    webhook_key_env: str = "WECHAT_WEBHOOK_KEY"  # 环境变量名
-    webhook_url: str  # 完整URL，必填
-    receivers: List[WechatReceiverConfig] = Field(default_factory=list)
 
 
 class FilteringConfig(BaseModel):
@@ -197,4 +190,4 @@ class Config(BaseModel):
     sources: SourcesConfig
     filtering: FilteringConfig
     email: Optional[EmailConfig] = None
-    wechat: Optional[WechatConfig] = None
+    webhook: Optional[WebhookConfig] = None

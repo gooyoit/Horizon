@@ -11,24 +11,6 @@
       "zh"
     ]
   },
-  "wechat": {
-    "enabled": true,
-    "webhook_key_env": "WECHAT_WEBHOOK_KEY",
-    "webhook_url": "http://119.23.238.217:8001/api/v1/webhook/send?key={webhook_key}",
-    "receivers": [
-      {
-        "type": "friend",
-        "name": "汉平",
-        "id": "user_id"
-      },
-      {
-        "type": "group",
-        "name": "A9计划冲冲冲",
-        "id": "group_id",
-        "mentioned_list": ["@all"]
-      }
-    ]
-  },
   "sources": {
     "github": [
       {
@@ -224,5 +206,38 @@
   "filtering": {
     "ai_score_threshold": 7.0,
     "time_window_hours": 24
+  },
+  "webhook": {
+    "enabled": false,
+    "url_env": "HORIZON_WEBHOOK_URL",
+    "request_body": {
+      "msg_type": "interactive",
+      "card": {
+        "config": {
+          "wide_screen_mode": true
+        },
+        "header": {
+          "title": {
+            "tag": "plain_text",
+            "content": "Horizon #{date}日报"
+          },
+          "template": "blue"
+        },
+        "elements": [
+          {
+            "tag": "markdown",
+            "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
+          },
+          {
+            "tag": "hr"
+          },
+          {
+            "tag": "markdown",
+            "content": "#{summary}"
+          }
+        ]
+      }
+    },
+    "headers": ""
   }
 }

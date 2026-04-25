@@ -11,7 +11,7 @@ from rich.console import Console
 from .models import Config, ContentItem
 from .storage.manager import StorageManager
 from .services.emailer import EmailManager
-from .services.wechat import WechatNotifier
+from .services.webhook import WebhookNotifier
 from .scrapers.github import GitHubScraper
 from .scrapers.hackernews import HackerNewsScraper
 from .scrapers.rss import RSSScraper
@@ -40,7 +40,11 @@ class HorizonOrchestrator:
         self.storage = storage
         self.console = Console()
         self.email_manager = EmailManager(config.email, console=self.console) if config.email else None
-        self.wechat_notifier = WechatNotifier(config.wechat) if config.wechat else None
+        self.webhook_notifier = (
+            WebhookNotifier(config.webhook, console=self.console)
+            if config.webhook and config.webhook.enabled
+            else None
+        )
 
     async def run(self, force_hours: int = None) -> None:
         """Execute the complete workflow.
@@ -114,7 +118,7 @@ class HorizonOrchestrator:
             await self._enrich_important_items(important_items)
 
             # 7. Generate and save daily summaries for each configured language
-            today = datetime.utcnow().strftime("%Y-%m-%d")
+            today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
                 summary = await self._generate_summary(important_items, today, len(all_items), language=lang)
 
@@ -164,19 +168,19 @@ class HorizonOrchestrator:
                     subject = f"Horizon Summary ({lang.upper()}) - {today}"
                     self.email_manager.send_daily_summary(summary, subject, subscribers)
 
-                # Send WeChat notification if configured
-                if self.wechat_notifier and self.config.wechat and self.config.wechat.enabled:
-                    self.console.print(f"📱 Sending {lang.upper()} WeChat notification...")
-                    subject = f"AI日报 ({lang.upper()}) - {today}"
-                    # Generate concise notification content from items (no regex on large summary)
-                    summarizer = DailySummarizer()
-                    notification_content = summarizer.generate_notification_content(
-                        important_items, today, language=lang
-                    )
-                    # Append link to daily summary page
-                    summary_url = f"https://gooyoit.github.io/Horizon/{today[0:4]}/{today[5:7]}/{today[8:10]}/summary-{lang}.html"
-                    notification_content += f"\n\n更多及详情 👉 {summary_url}"
-                    await self.wechat_notifier.send_notification(notification_content, subject)
+                # Send webhook notification if configured
+                if self.webhook_notifier:
+                    self.console.print(f"🔔 Sending {lang.upper()} webhook notification...")
+                    webhook_vars = {
+                        "date": today,
+                        "language": lang,
+                        "important_items": len(important_items),
+                        "all_items": len(all_items),
+                        "result": "success",
+                        "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+                        "summary": summary,
+                    }
+                    await self.webhook_notifier.notify(webhook_vars)
 
             self.console.print("[bold green]✅ Horizon completed successfully![/bold green]")
             usage = get_usage_snapshot()
@@ -196,6 +200,21 @@ class HorizonOrchestrator:
 
         except Exception as e:
             self.console.print(f"[bold red]❌ Error: {e}[/bold red]")
+
+            # Send webhook failure notification if configured
+            if self.webhook_notifier:
+                self.console.print("🔔 Sending webhook failure notification...")
+                webhook_vars = {
+                    "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "language": "",
+                    "important_items": 0,
+                    "all_items": 0,
+                    "result": "failed",
+                    "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+                    "summary": f"generation failed: {e}",
+                }
+                await self.webhook_notifier.notify(webhook_vars)
+
             raise
 
     def _determine_time_window(self, force_hours: int = None) -> datetime:
