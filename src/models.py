@@ -15,6 +15,7 @@ class SourceType(str, Enum):
     TELEGRAM = "telegram"
     PRODUCTHUNT = "producthunt"
     WEIBO = "weibo"
+    TWITTER = "twitter"
 
 
 class ContentItem(BaseModel):
@@ -56,6 +57,7 @@ class AIConfig(BaseModel):
     api_key_env: str
     temperature: float = 0.3
     max_tokens: int = 4096
+    throttle_sec: float = 0.0
     languages: List[str] = Field(default_factory=lambda: ["en"])
 
 
@@ -140,6 +142,19 @@ class WeiboConfig(BaseModel):
     fetch_limit: int = 20  # Number of hot search items to fetch
 
 
+class TwitterConfig(BaseModel):
+    """Twitter source configuration via Apify."""
+    enabled: bool = True
+    apify_token_env: str = "APIFY_TOKEN"
+    actor_id: str = "altimis~scweet"
+    users: List[str] = Field(default_factory=list)
+    fetch_limit: int = 10
+    fetch_reply_text: bool = False
+    max_replies_per_tweet: int = 3
+    max_tweets_to_expand: int = 10
+    reply_min_likes: int = 0
+
+
 class SourcesConfig(BaseModel):
     """All sources configuration."""
 
@@ -150,6 +165,7 @@ class SourcesConfig(BaseModel):
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
     producthunt: ProductHuntConfig = Field(default_factory=ProductHuntConfig)
     weibo: WeiboConfig = Field(default_factory=WeiboConfig)
+    twitter: Optional[TwitterConfig] = None
 
 
 class WebhookConfig(BaseModel):
@@ -158,6 +174,12 @@ class WebhookConfig(BaseModel):
     url_env: Optional[str] = None          # Environment variable name containing the webhook URL
     request_body: Optional[Union[str, dict, list]] = None  # POST body: real JSON object or string with #{key} placeholders; if empty, will use GET
     headers: Optional[str] = None          # Custom headers, "Key: Value" per line
+    delivery: str = "summary"             # summary, or summary_and_items
+    overview_position: str = "first"       # For summary_and_items: first, or last
+    platform: str = "generic"              # generic, feishu, lark, dingtalk, slack, discord
+    layout: str = "markdown"               # markdown, or collapsible
+    fallback_layout: str = "markdown"      # Layout to use when the requested layout is unsupported
+    languages: Optional[List[str]] = None  # Optional language filter for webhook delivery; defaults to all AI languages
     enabled: bool = False
 
 

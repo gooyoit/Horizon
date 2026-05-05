@@ -9,10 +9,11 @@
     "languages": [
       "zh",
       "en"
-    ]
+    ],
+    "throttle_sec": 0
   },
   "email": {
-    "enabled": true,
+    "enabled": false,
     "smtp_server": "smtp.qq.com",
     "smtp_port": 465,
     "imap_server": "imap.qq.com",
@@ -103,6 +104,15 @@
     "weibo": {
       "enabled": true,
       "fetch_limit": 20
+    },
+    "twitter": {
+      "enabled": false,
+      "users": ["karpathy", "ylecun"],
+      "fetch_limit": 10,
+      "fetch_reply_text": false,
+      "max_replies_per_tweet": 3,
+      "max_tweets_to_expand": 10,
+      "reply_min_likes": 5
     }
   },
   "filtering": {
@@ -112,32 +122,41 @@
   "webhook": {
     "enabled": false,
     "url_env": "HORIZON_WEBHOOK_URL",
+    "delivery": "summary",
+    "overview_position": "first",
+    "platform": "generic",
+    "layout": "markdown",
+    "fallback_layout": "markdown",
+    "languages": null,
     "request_body": {
       "msg_type": "interactive",
       "card": {
+        "schema": "2.0",
         "config": {
           "wide_screen_mode": true
         },
         "header": {
           "title": {
             "tag": "plain_text",
-            "content": "Horizon #{date}日报"
+            "content": "#{message_title}"
           },
           "template": "blue"
         },
-        "elements": [
-          {
-            "tag": "markdown",
-            "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
-          },
-          {
-            "tag": "hr"
-          },
-          {
-            "tag": "markdown",
-            "content": "#{summary}"
-          }
-        ]
+        "body": {
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
+            },
+            {
+              "tag": "hr"
+            },
+            {
+              "tag": "markdown",
+              "content": "#{summary}"
+            }
+          ]
+        }
       }
     },
     "headers": ""

@@ -4,13 +4,13 @@
 
 **Enjoy the News itself. Leave others to Horizon**
 
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json&style=flat-square)](https://github.com/astral-sh/uv)
 [![Daily Summary](https://github.com/Thysrael/Horizon/actions/workflows/deploy-docs.yml/badge.svg?style=flat-square)](https://thysrael.github.io/Horizon/)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Thysrael/Horizon?style=flat-square)](https://github.com/Thysrael/Horizon/commits/main)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Sources Welcome](https://img.shields.io/badge/📡_sources-welcome-f97316?style=flat-square)
+<a href="https://hellogithub.com/repository/Thysrael/Horizon" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=7a4b606e28e4477998d35851cf4fdddf&claim_uid=rtjnLkYT7ziQJUG&theme=small" alt="Featured｜HelloGitHub" /></a>
 <br>
 
 ![Claude](https://img.shields.io/badge/Claude-f0daba?style=flat-square&logo=anthropic&logoColor=black)
@@ -21,7 +21,7 @@
 ![MiniMax](https://img.shields.io/badge/MiniMax-FF6F00?style=flat-square)
 ![OpenClaw](https://img.shields.io/badge/OpenClaw-C83232?style=flat-square)
 
-Horizon collects news from multiple customizable sources, uses AI to score and filter them, and generates a daily briefing — complete with summaries, community discussions, and background explanations in both English and Chinese.
+📡 Your own AI-powered news radar. Generates daily briefings in English & Chinese. | 构建你专属的 AI 新闻雷达
 
 [📖 Live Demo](https://thysrael.github.io/Horizon/) · [📋 Configuration Guide](https://thysrael.github.io/Horizon/configuration) · [简体中文](README_zh.md)
 
@@ -32,61 +32,135 @@ Horizon collects news from multiple customizable sources, uses AI to score and f
 <table>
 <tr>
 <td width="50%">
-<p align="center"><strong>Daily Overview</strong></p>
+<p align="center"><strong>Ranked Daily Briefing</strong></p>
 <img src="docs/assets/overview_en.png" alt="Daily Overview" />
 </td>
 <td width="50%">
-<p align="center"><strong>News Detail</strong></p>
+<p align="center"><strong>Context, Summary & Discussion</strong></p>
 <img src="docs/assets/one_news_en.png" alt="News Detail" />
 </td>
 </tr>
 </table>
 
 <details>
-<summary><strong>Terminal Output</strong></summary>
+<summary><strong>More Screenshots</strong></summary>
 <br>
-<p align="center">
-  <img src="docs/assets/terminal_log.png" alt="Terminal Output" width="400" />
-</p>
+<table>
+<tr>
+<td width="33.33%">
+<p align="center"><strong>Terminal Output</strong></p>
+<img src="docs/assets/terminal_log.png" alt="Terminal Output" />
+</td>
+<td width="33.33%">
+<p align="center"><strong>Feishu Notification</strong></p>
+<img src="docs/assets/feishu_en.png" alt="Feishu Notification" />
+</td>
+<td width="33.33%">
+<p align="center"><strong>Email Delivery</strong></p>
+<img src="docs/assets/email.png" alt="Email Delivery" />
+</td>
+</tr>
+</table>
 </details>
+
+## Why Horizon?
+
+Good news is scattered; bad news is endless. Horizon gives you a personal first pass over Hacker News, Reddit, Telegram, RSS, and GitHub: it fetches, deduplicates, scores, filters, and enriches stories with background context and community discussion.
+
+But Horizon is not just another summarizer. AI is great at reducing noise, but news still needs human taste: the sources you trust, the comments that change how you read a story, and the hidden gems only people can share. Horizon keeps that human layer in the loop with customizable sources, thresholds, models, languages, delivery channels, comment summaries, and a community source hub.
 
 ## Features
 
-> **🤝 Beyond a Cold AI Agent:** Designed with a "human touch". Build your personalized newsroom by deeply customizing feeds and sharing high-quality information sources via the [Horizon site](https://horizon1123.top/).
-
-- **📡 Multi-Source Aggregation** — Collects from Hacker News, RSS feeds, Reddit, Telegram channels, and GitHub (releases & user events)
-- **🤖 AI-Powered Scoring** — Uses Claude, GPT-4, Gemini, DeepSeek, Doubao, MiniMax, or any OpenAI-compatible API to rate each item 0-10, filtering out the noise
-- **🌐 Bilingual Summaries** — Generates daily reports in both English and Chinese
-- **🔍 Content Enrichment** — Searches the web to provide background knowledge for unfamiliar concepts
-- **💬 Community Voices** — Collects and summarizes discussions from comments on HackerNews, Reddit, etc.
-- **🔗 Cross-Source Deduplication** — Merges duplicate items from different platforms automatically
-- **📧 Email Subscription** — Self-hosted newsletter system (SMTP/IMAP) that handles "Subscribe" requests automatically
-- **🔔 Webhook Notification** — Send results to Feishu, Slack, Discord, or any webhook endpoint with template rendering and truncation
-- **📝 Static Site Generation** — Deploys as a GitHub Pages site via GitHub Actions, updated on a schedule
-- **⚙️ Fully Configurable** — Single JSON config file, easy to customize sources, thresholds, and AI providers
-- **🧙 Setup Wizard** — Interactive CLI that recommends sources based on your interests.
+- **📡 Watch Your Own Sources** — Track Hacker News, RSS, Reddit, Telegram, Twitter/X, and GitHub releases or user activity in one pipeline
+- **🤖 Turn Noise Into a Reading List** — Score each item from 0-10 with Claude, GPT, Gemini, DeepSeek, Doubao, MiniMax, or any OpenAI-compatible API
+- **🔗 Merge Repeated Stories** — Deduplicate the same story across platforms before it reaches your briefing
+- **🔍 Understand the Background** — Add web-researched context for unfamiliar concepts, companies, projects, and technical terms
+- **💬 Read the Conversation** — Collect and summarize community comments from Hacker News, Reddit, and other supported sources
+- **🌐 Publish in Two Languages** — Generate English and Chinese daily briefings from the same source set
+- **📝 Ship a Daily Site** — Publish generated Markdown as a GitHub Pages daily briefing site
+- **📧 Deliver by Email** — Run a self-hosted SMTP/IMAP newsletter with automatic subscribe and unsubscribe handling
+- **🔔 Push to Chat or Automations** — Send templated results to Feishu/Lark, DingTalk, Slack, Discord, or custom webhook endpoints
+- **🧙 Start From Your Interests** — Use the setup wizard to generate a personalized source configuration
+- **⚙️ Tune the Radar** — Customize sources, thresholds, models, languages, and delivery channels from one JSON config
 
 ## How It Works
 
-```
-              ┌──────────┐
-              │ Hacker   │
-┌─────────┐   │ News     │   ┌──────────┐   ┌──────────┐   ┌──────────┐
-│  RSS    │──▶│ Reddit   │──▶│ AI Score │──▶│ Enrich   │──▶│ Summary  │
-│ Telegram│   │ GitHub   │   │ & Filter │   │ & Search │   │ & Deploy │
-└─────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘
-  Fetch from      Merge &        Score          Web search     Generate
-  all sources    deduplicate     0-10 each      background     Markdown &
-                                & filter        knowledge      deploy site
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+    "fontSize": "18px",
+    "primaryTextColor": "#2d2a3e",
+    "primaryBorderColor": "#e0dbd3",
+    "lineColor": "#7c7891",
+    "tertiaryColor": "#faf8f5",
+    "clusterBkg": "#f3f0eb",
+    "clusterBorder": "#e0dbd3"
+  }
+}}%%
+flowchart LR
+    classDef config fill:#fbbf24,stroke:#d4a017,color:#2d2a3e,stroke-width:1.5px;
+    classDef source fill:#ede7fb,stroke:#6d4aaa,color:#2d2a3e,stroke-width:1.5px;
+    classDef process fill:#ffe8db,stroke:#e0652e,color:#2d2a3e,stroke-width:1.5px;
+    classDef output fill:#f9d7e5,stroke:#be185d,color:#2d2a3e,stroke-width:1.5px;
+
+    config["⚙️ Config<br/>sources, thresholds, models, outputs"]
+
+    subgraph sources["Configured Sources"]
+        rss["📡 RSS"]
+        hn["📰 Hacker News"]
+        reddit["💬 Reddit"]
+        telegram["✈️ Telegram"]
+        twitter["🐦 Twitter / X"]
+        github["🐙 GitHub"]
+    end
+
+    fetch["📥 Fetch"]
+    dedup["🧹 Deduplicate"]
+    score["🤖 AI Score & Filter"]
+    enrich["🔎 Enrich"]
+    summary["📝 Summarize"]
+
+    subgraph outputs["Outputs"]
+        direction TB
+        site["🌐 Pages"]
+        email["📧 Email"]
+        webhook["🔔 Webhooks"]
+        mcp["🧩 MCP"]
+    end
+
+    config --> fetch
+    rss --> fetch
+    hn --> fetch
+    reddit --> fetch
+    telegram --> fetch
+    twitter --> fetch
+    github --> fetch
+
+    fetch --> dedup --> score --> enrich --> summary
+    config --> score
+    config --> summary
+    config --> outputs
+
+    summary --> site
+    summary --> email
+    summary --> webhook
+    summary --> mcp
+
+    class config config
+    class rss,hn,reddit,telegram,twitter,github source
+    class fetch,dedup,score,enrich,summary process
+    class site,email,webhook,mcp output
 ```
 
-1. **Fetch** — Pull latest content from all configured sources concurrently
-2. **Deduplicate** — Merge items pointing to the same URL across different platforms
-3. **Score** — AI rates each item 0-10 based on technical depth, novelty, and impact
-4. **Filter** — Keep only items above your configured threshold (default: 6.0)
-5. **Enrich** — For high-scoring items, search the web for background context and collect community discussions
-6. **Summarize** — Generate a structured Markdown report with summaries, tags, and references
-7. **Deploy** — Optionally publish to GitHub Pages as a daily-updated static site
+1. **Define** — Configure sources, thresholds, models, languages, and delivery from one JSON config.
+2. **Fetch** — Pull latest content from all configured sources concurrently.
+3. **Deduplicate** — Merge items pointing to the same story or URL across platforms.
+4. **Score & Filter** — Use AI to rank items and keep only those above your threshold.
+5. **Enrich** — Search the web for background context and collect community discussion for important items.
+6. **Summarize** — Generate a structured Markdown briefing with summaries, tags, and references.
+7. **Deliver** — Publish the result to GitHub Pages, email, webhooks such as Feishu, MCP, or local files.
 
 ## Quick Start
 
@@ -101,9 +175,14 @@ cd horizon
 # Install with uv (recommended)
 uv sync
 
+# Install test/development extras when needed
+uv sync --extra dev
+
 # Or with pip
 pip install -e .
 ```
+
+`dev` is currently defined as an optional extra in `pyproject.toml`, so use `uv sync --extra dev` for pytest and other development dependencies.
 
 **Option B: Docker**
 
@@ -140,32 +219,22 @@ cp .env.example .env          # Add your API keys
 cp data/config.example.json data/config.json  # Customize your sources
 ```
 
-Here's what a config looks like:
+Minimal manual configuration:
 
 ```jsonc
 {
   "ai": {
-    "provider": "openai",       // or "anthropic", "gemini", "doubao", "minimax"
+    "provider": "openai",
     "model": "gpt-4",
-    "api_key_env": "OPENAI_API_KEY",
-    "languages": ["en", "zh"]   // bilingual output
+    "api_key_env": "OPENAI_API_KEY"
   },
   "sources": {
-    "hackernews": { "enabled": true, "fetch_top_stories": 20, "min_score": 100 },
     "rss": [
       { "name": "Simon Willison", "url": "https://simonwillison.net/atom/everything/" }
-    ],
-    "reddit": {
-      "subreddits": [{ "subreddit": "MachineLearning", "sort": "hot" }],
-      "fetch_comments": 5
-    },
-    "telegram": {
-      "channels": [{ "channel": "zaihuapd", "fetch_limit": 20 }]
-    }
+    ]
   },
   "filtering": {
-    "ai_score_threshold": 6.0,
-    "time_window_hours": 24
+    "ai_score_threshold": 6.0
   }
 }
 ```
@@ -202,124 +271,49 @@ Horizon works great as a **GitHub Actions** cron job. See [`.github/workflows/da
 | **RSS / Atom** | Any RSS or Atom feed | — |
 | **Reddit** | Subreddits + user posts | Yes (top N comments) |
 | **Telegram** | Public channel messages | — |
+| **Twitter / X** | Tweets from specific users | Yes (top N replies) |
 | **GitHub** | User events & repo releases | — |
 
-## MCP Integration
+## Where Your Briefing Goes
 
-Horizon ships with a built-in [MCP](https://modelcontextprotocol.io/) server so AI assistants can drive the pipeline programmatically.
+Horizon can publish or deliver the generated briefing in several ways:
 
-```bash
-# Start the MCP server (stdio mode)
-uv run horizon-mcp
-```
+| Channel | What it does |
+|---------|--------------|
+| **GitHub Pages Daily Site** | Copies generated Markdown into `docs/` so GitHub Pages can publish a daily-updated briefing site |
+| **Email Subscription** | Sends the daily briefing to subscribers and handles subscribe/unsubscribe requests through SMTP/IMAP |
+| **Webhook Notification** | Pushes success or failure results to Feishu/Lark, DingTalk, Slack, Discord, or any custom webhook endpoint |
+| **MCP Server** | Exposes Horizon pipeline steps as tools so AI assistants can fetch, score, filter, enrich, summarize, and run the full workflow |
 
-Available tools include `hz_validate_config`, `hz_fetch_items`, `hz_score_items`, `hz_filter_items`, `hz_enrich_items`, `hz_generate_summary`, and `hz_run_pipeline`.
+For setup details, see the [Configuration Guide](docs/configuration.md). For MCP tool references and client setup, see [`src/mcp/README.md`](src/mcp/README.md) and [`src/mcp/integration.md`](src/mcp/integration.md).
 
-See [`src/mcp/README.md`](src/mcp/README.md) for the full tool reference and [`src/mcp/integration.md`](src/mcp/integration.md) for client setup.
+## Documentation
 
-## Webhook Notification
+| Guide | Description |
+|-------|-------------|
+| [Configuration](docs/configuration.md) | AI providers, sources, filtering, email, webhook, GitHub Pages, and MCP setup |
+| [Scoring](docs/scoring.md) | How Horizon evaluates and ranks news items |
+| [Scrapers](docs/scrapers.md) | Source scraper details and extension notes |
+| [MCP Tools](src/mcp/README.md) | Tool reference for MCP-compatible clients |
 
-Horizon can push results to any webhook endpoint (Feishu/Lark, Slack, Discord, custom APIs, etc.) when the pipeline completes — both on success and failure.
+## Project Status
 
-**Configuration:**
+Horizon already supports the full daily briefing loop: multi-source collection, AI scoring, deduplication, enrichment, comment summaries, bilingual generation, GitHub Pages publishing, email delivery, webhook delivery, Docker deployment, MCP integration, and the setup wizard.
 
-- <details><summary>DingTalk</summary>
+Planned improvements:
 
-  - DingTalk desktop -> Group settings -> Smart group assistant -> Add robot -> Custom
-  - Only check `Custom keywords`, the keyword must appear in the request_body content, e.g.: `Horizon`
-  - Enter the DingTalk robot's `Webhook URL` in the `.env` file under`HORIZON_WEBHOOK_URL`
-  - Enter the following request_body:
-    ```json
-    {
-        "msgtype": "markdown",
-        "markdown": {
-            "title": "Horizon #{date} Daily",
-            "text": "Horizon result: #{result}\n\n Horizon important items: #{important_items}/#{all_items}\n\n #{summary}"
-        }
-    }
-    ```
-  </details>
-- <details><summary>Feishu / Lark</summary>
-
-  - Feishu desktop -> Group settings -> Add robot -> Custom robot
-  - Only check `Custom keywords` in security settings, the keyword must appear in the request_body content, e.g.: `Horizon`
-  - Enter the Feishu robot's `Webhook URL` in the `.env` file under `HORIZON_WEBHOOK_URL`
-  - Enter the following request_body:
-    ```json
-    {
-      "msg_type": "interactive",
-      "card": {
-        "config": {
-          "wide_screen_mode": true
-        },
-        "header": {
-          "title": {
-            "tag": "plain_text",
-            "content": "Horizon #{date} Daily"
-          },
-          "template": "blue"
-        },
-        "elements": [
-          {
-            "tag": "markdown",
-            "content": "Horizon result: #{result}\nHorizon important items: #{important_items}/#{all_items}"
-          },
-          {
-            "tag": "hr"
-          },
-          {
-            "tag": "markdown",
-            "content": "#{summary?limit=200&split=---}"
-          }
-        ]
-      }
-    }
-    ```
-  </details>
-
-**Template variables:**
-
-| Variable | Description |
-|----------|-------------|
-| `#{date}` | Report date (e.g. `2026-04-24`) |
-| `#{language}` | Language code (`en` or `zh`) |
-| `#{important_items}` | Number of items that passed the score threshold |
-| `#{all_items}` | Total number of fetched items |
-| `#{result}` | `success` or `failed` |
-| `#{timestamp}` | Unix timestamp |
-| `#{summary}` | Full summary markdown |
-
-**Parameterized syntax:** `#{key?limit=N&split=DELIM}` truncates long values by splitting on `DELIM` and keeping segments until the total character count reaches `N`. Useful for platforms with message length limits.
-
-Example: `#{summary?limit=3000&split=---}` keeps enough `---`-separated sections to stay under 3000 characters.
-
-When `request_body` is a dict, special characters in `#{summary}` (quotes, newlines) are safely handled via JSON serialization. When it's a string, use `#{summary}` only with safe content (no unescaped quotes).
-
-## Roadmap
-
-- [x] Multi-source aggregation (HN, RSS, Reddit, Telegram, GitHub)
-- [x] AI scoring with multiple providers
-- [x] Bilingual summary generation (EN/ZH)
-- [x] Web search for background enrichment
-- [x] Community discussion collection
-- [x] GitHub Pages deployment
-- [x] **Email Subscription** (SMTP/IMAP automated newsletter)
-- [x] **Docker deployment support**
-- [x] **MCP server integration**
-- [x] Web UI dashboard
-- [x] **Setup Wizard** — interactive CLI that recommends sources based on user interests
-- [x] **Webhook Notification** — push results to Feishu, Slack, Discord, or any webhook endpoint
-- [X] **Improved Web UI** — better digest and article detail experience
-- [ ] More source types (Twitter/X, Discord, etc.)
-- [ ] Custom scoring prompts per source
+- More source types, such as Twitter/X and Discord
+- Custom scoring prompts per source
+- Publish releases on GitHub
+- Publish the package to PyPI for `pip install`
 
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
-### Contribute News
+### Share Sources
 
-Want to share valuable updates with the Horizon community? Please contribute news directly at **[horizon1123.top](https://horizon1123.top)**.
+Want to share valuable source discoveries with the Horizon community? Please submit them through **[horizon1123.top](https://horizon1123.top)**.
 
 Great candidates: niche RSS discoveries, active subreddit trends, notable GitHub updates, or Telegram channel highlights in your area of expertise.
 

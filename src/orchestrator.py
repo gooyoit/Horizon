@@ -10,7 +10,7 @@ from rich.console import Console
 
 from .models import Config, ContentItem
 from .storage.manager import StorageManager
-from .services.emailer import EmailManager
+from .services.email import EmailManager
 from .services.wechat import WechatNotifier
 from .services.webhook import WebhookNotifier
 from .scrapers.github import GitHubScraper
@@ -20,6 +20,7 @@ from .scrapers.reddit import RedditScraper
 from .scrapers.telegram import TelegramScraper
 from .scrapers.producthunt import ProductHuntScraper
 from .scrapers.weibo import WeiboScraper
+from .scrapers.twitter import TwitterScraper
 from .ai.client import create_ai_client
 from .ai.analyzer import ContentAnalyzer
 from .ai.summarizer import DailySummarizer
@@ -107,6 +108,9 @@ class HorizonOrchestrator:
                 )
             important_items = deduped_items
 
+            # 5.6 Optional second-stage Twitter reply expansion + targeted re-analysis
+            await self._expand_twitter_discussion(important_items)
+
             # Show per-sub-source selection breakdown
             selected_counts: Dict[str, int] = defaultdict(int)
             for item in important_items:
@@ -122,7 +126,8 @@ class HorizonOrchestrator:
             # 7. Generate and save daily summaries for each configured language
             today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
-                summary = await self._generate_summary(important_items, today, len(all_items), language=lang)
+                summarizer = DailySummarizer()
+                summary = await summarizer.generate_summary(important_items, today, len(all_items), language=lang)
 
                 # Save to data/summaries/
                 summary_path = self.storage.save_daily_summary(today, summary, language=lang)
@@ -187,17 +192,14 @@ class HorizonOrchestrator:
 
                 # Send webhook notification if configured
                 if self.webhook_notifier:
-                    self.console.print(f"🔔 Sending {lang.upper()} webhook notification...")
-                    webhook_vars = {
-                        "date": today,
-                        "language": lang,
-                        "important_items": len(important_items),
-                        "all_items": len(all_items),
-                        "result": "success",
-                        "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
-                        "summary": summary,
-                    }
-                    await self.webhook_notifier.notify(webhook_vars)
+                    await self.webhook_notifier.send_daily_summary(
+                        summary=summary,
+                        important_items=important_items,
+                        all_items_count=len(all_items),
+                        date=today,
+                        lang=lang,
+                        summarizer=summarizer,
+                    )
 
             self.console.print("[bold green]✅ Horizon completed successfully![/bold green]")
             usage = get_usage_snapshot()
@@ -220,17 +222,10 @@ class HorizonOrchestrator:
 
             # Send webhook failure notification if configured
             if self.webhook_notifier:
-                self.console.print("🔔 Sending webhook failure notification...")
-                webhook_vars = {
-                    "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "language": "",
-                    "important_items": 0,
-                    "all_items": 0,
-                    "result": "failed",
-                    "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
-                    "summary": f"generation failed: {e}",
-                }
-                await self.webhook_notifier.notify(webhook_vars)
+                await self.webhook_notifier.send_failure(
+                    date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    error_message=str(e),
+                )
 
             raise
 
@@ -290,6 +285,11 @@ class HorizonOrchestrator:
             if self.config.sources.weibo.enabled:
                 weibo_scraper = WeiboScraper(self.config.sources.weibo, client)
                 tasks.append(self._fetch_with_progress("Weibo", weibo_scraper, since))
+
+            # Twitter
+            if self.config.sources.twitter and self.config.sources.twitter.enabled:
+                twitter_scraper = TwitterScraper(self.config.sources.twitter, client)
+                tasks.append(self._fetch_with_progress("Twitter", twitter_scraper, since))
 
             # Fetch all concurrently
             results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -471,6 +471,56 @@ class HorizonOrchestrator:
                 drop_indices.add(dup_idx)
 
         return [item for i, item in enumerate(items) if i not in drop_indices]
+
+    async def _expand_twitter_discussion(self, items: List[ContentItem]) -> None:
+        """Second-stage: fetch reply text for important Twitter items and re-analyze.
+
+        Only runs when sources.twitter.fetch_reply_text is True.
+        Bounded by max_tweets_to_expand to control cost.
+        """
+        tw_cfg = self.config.sources.twitter
+        if not tw_cfg or not tw_cfg.enabled or not tw_cfg.fetch_reply_text:
+            return
+
+        from .models import SourceType
+
+        twitter_items = [
+            item for item in items
+            if item.source_type == SourceType.TWITTER
+        ][:tw_cfg.max_tweets_to_expand]
+
+        if not twitter_items:
+            return
+
+        self.console.print(
+            f"💬 Fetching reply text for {len(twitter_items)} Twitter items..."
+        )
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            scraper = TwitterScraper(tw_cfg, client)
+            expanded = []
+            for item in twitter_items:
+                try:
+                    reply_lines = await scraper.fetch_replies_for_item(item)
+                    if TwitterScraper.append_discussion_content(item, reply_lines):
+                        expanded.append(item)
+                        self.console.print(
+                            f"   💬 {len(reply_lines)} replies added to: {item.title[:60]}"
+                        )
+                except Exception as exc:
+                    self.console.print(
+                        f"   [yellow]⚠️  Reply fetch failed for {item.id}: {exc}[/yellow]"
+                    )
+
+        if not expanded:
+            return
+
+        self.console.print(
+            f"   Re-analyzing {len(expanded)} Twitter items with reply context...\n"
+        )
+        ai_client = create_ai_client(self.config.ai)
+        analyzer = ContentAnalyzer(ai_client)
+        await analyzer.analyze_batch(expanded)
 
     async def _enrich_important_items(self, items: List[ContentItem]) -> None:
         """Enrich items with background knowledge (2nd AI pass).

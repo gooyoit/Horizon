@@ -144,6 +144,53 @@ class DailySummarizer:
 
         return header + toc + "".join(parts)
 
+    def generate_webhook_overview(
+        self,
+        items: List[ContentItem],
+        date: str,
+        total_fetched: int,
+        language: str = "en",
+    ) -> str:
+        """Generate a compact overview for multi-message webhook delivery."""
+        labels = LABELS.get(language, LABELS["en"])
+        if not items:
+            return self._generate_empty_summary(date, total_fetched, labels)
+
+        if language == "zh":
+            header = (
+                f"# {labels['header']} - {date}\n\n"
+                f"> 从 {total_fetched} 条内容中筛选出 {len(items)} 条重要资讯。\n\n"
+                "下面会按新闻逐条发送详情，你可以只看感兴趣的标题。\n\n"
+            )
+        else:
+            header = (
+                f"# {labels['header']} - {date}\n\n"
+                f"> Selected {len(items)} important items from {total_fetched} fetched items.\n\n"
+                "Details will be sent item by item so you can read only the topics you care about.\n\n"
+            )
+
+        entries = []
+        for i, item in enumerate(items, start=1):
+            title = str(item.metadata.get(f"title_{language}") or item.title).replace("[", "(").replace("]", ")")
+            if language == "zh":
+                title = _pangu(title)
+            score = item.ai_score or "?"
+            entries.append(f"{i}. [{title}]({item.url}) \u2b50\ufe0f {score}/10")
+
+        return header + "\n".join(entries)
+
+    def generate_webhook_item(
+        self,
+        item: ContentItem,
+        language: str,
+        index: int,
+        total: int,
+    ) -> str:
+        """Generate one item message for multi-message webhook delivery."""
+        labels = LABELS.get(language, LABELS["en"])
+        prefix = f"第 {index}/{total} 条\n\n" if language == "zh" else f"Item {index}/{total}\n\n"
+        return prefix + self._format_item(item, labels, language, index).rstrip("-\n ")
+
     def _format_item(self, item: ContentItem, labels: dict, language: str, index: int) -> str:
         """Format a single ContentItem into Markdown."""
         _title = item.metadata.get(f"title_{language}") or item.title
@@ -179,6 +226,12 @@ class DailySummarizer:
             day = item.published_at.strftime("%d").lstrip("0")
             source_parts.append(item.published_at.strftime(f"%b {day}, %H:%M"))
         source_line = " \u00b7 ".join(source_parts)  # ·
+
+        discussion_url = meta.get("discussion_url")
+        if discussion_url:
+            discussion_url = str(discussion_url)
+            if discussion_url != url:
+                source_line += f' · [{labels["discussion"]}]({discussion_url})'
 
         lines = [
             f'<a id="item-{index}"></a>',

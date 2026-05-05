@@ -57,8 +57,8 @@
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 10,
-      "min_score": 200
+      "fetch_top_stories": 30,
+      "min_score": 150
     },
     "producthunt": {
       "enabled": true,
@@ -219,18 +219,39 @@
           "fetch_limit": 20
         }
       ]
+    },
+    "twitter": {
+      "enabled": true,
+      "users": [
+        "karpathy",
+        "roifex"
+      ],
+      "fetch_limit": 10,
+      "fetch_reply_text": false,
+      "max_replies_per_tweet": 3,
+      "max_tweets_to_expand": 10,
+      "reply_min_likes": 5
     }
   },
   "filtering": {
-    "ai_score_threshold": 7.0,
+    "ai_score_threshold": 8.0,
     "time_window_hours": 24
   },
   "webhook": {
     "enabled": false,
     "url_env": "HORIZON_WEBHOOK_URL",
+    "delivery": "summary_and_items",
+    "overview_position": "last",
+    "platform": "feishu",
+    "layout": "collapsible",
+    "fallback_layout": "markdown",
+    "languages": [
+      "zh"
+    ],
     "request_body": {
       "msg_type": "interactive",
       "card": {
+        "schema": "2.0",
         "config": {
           "wide_screen_mode": true
         },
@@ -241,19 +262,14 @@
           },
           "template": "blue"
         },
-        "elements": [
-          {
-            "tag": "markdown",
-            "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
-          },
-          {
-            "tag": "hr"
-          },
-          {
-            "tag": "markdown",
-            "content": "#{summary}"
-          }
-        ]
+        "body": {
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "#{summary}"
+            }
+          ]
+        }
       }
     },
     "headers": ""
