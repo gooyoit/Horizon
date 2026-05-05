@@ -30,11 +30,12 @@ jobs:
         env:
           # Map secrets to environment variables expected by config.json
           # Modify these based on your config.json provider settings
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           # GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           # LWN_KEY: ${{ secrets.LWN_KEY }}
           WECHAT_WEBHOOK_KEY: ${{ secrets.WECHAT_WEBHOOK_KEY }}
+          APIFY_TOKEN:  ${{ secrets.APIFY_TOKEN }}
         run: uv run horizon --hours 24
 
       - name: Set current date as environment variable

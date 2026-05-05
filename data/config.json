@@ -1,15 +1,27 @@
 {
   "version": "1.0",
   "ai": {
-    "provider": "openai",
-    "model": "qwen3-max-2026-01-23",
-    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-    "api_key_env": "OPENAI_API_KEY",
+    "provider": "anthropic",
+    "model": "GLM-5.1",
+    "base_url": "https://open.bigmodel.cn/api/anthropic",
+    "api_key_env": "ANTHROPIC_API_KEY",
     "temperature": 0.3,
     "max_tokens": 8192,
     "languages": [
       "zh"
-    ]
+    ],
+    "throttle_sec": 0
+  },
+  "email": {
+    "enabled": false,
+    "smtp_server": "smtp.qq.com",
+    "smtp_port": 465,
+    "imap_server": "imap.qq.com",
+    "imap_port": 993,
+    "email_address": "xxx@qq.com",
+    "sender_name": "Horizon Daily",
+    "subscribe_keyword": "SUBSCRIBE",
+    "unsubscribe_keyword": "UNSUBSCRIBE"
   },
   "wechat": {
     "enabled": true,
@@ -222,11 +234,25 @@
     },
     "twitter": {
       "enabled": true,
+      "actor_id": "EvFXOhwR6wsOWmdSK",
       "users": [
         "karpathy",
-        "roifex"
+        "sama",
+        "ylecun",
+        "DarioAmodei",
+        "demishassabis",
+        "DrJimFan",
+        "ilyasut",
+        "fchollet",
+        "AndrewYNg",
+        "swyx",
+        "simonw",
+        "hardmaru",
+        "levelsio",
+        "rowancheung",
+        "araborov"
       ],
-      "fetch_limit": 10,
+      "fetch_limit": 3,
       "fetch_reply_text": false,
       "max_replies_per_tweet": 3,
       "max_tweets_to_expand": 10,
