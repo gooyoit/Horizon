@@ -88,6 +88,13 @@
         "category": "ai-tools"
       },
       {
+        "name": "AI Hot",
+        "url": "https://aihot.virxact.com/feed/all.xml",
+        "enabled": true,
+        "category": "ai-news",
+        "fetch_limit": 20
+      },
+      {
         "name": "GitHub Trending - Daily",
         "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
         "enabled": true,
