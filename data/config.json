@@ -97,18 +97,6 @@
           "fetch_limit": 20
         }
       ]
-    },
-    "twitter": {
-      "enabled": true,
-      "users": [
-        "karpathy",
-        "roifex"
-      ],
-      "fetch_limit": 10,
-      "fetch_reply_text": false,
-      "max_replies_per_tweet": 3,
-      "max_tweets_to_expand": 10,
-      "reply_min_likes": 5
     }
   },
   "filtering": {
