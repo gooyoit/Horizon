@@ -10,7 +10,7 @@
     "languages": [
       "zh"
     ],
-    "throttle_sec": 0
+    "throttle_sec": 1
   },
   "email": {
     "enabled": false,
