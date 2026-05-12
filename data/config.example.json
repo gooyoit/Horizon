@@ -1,18 +1,16 @@
 {
   "version": "1.0",
   "ai": {
-    "provider": "anthropic",
-    "model": "GLM-5.1",
-    "base_url": "https://open.bigmodel.cn/api/anthropic",
-    "api_key_env": "ANTHROPIC_API_KEY",
+    "provider": "openai",
+    "model": "gpt-4",
+    "api_key_env": "OPENAI_API_KEY",
     "temperature": 0.3,
-    "max_tokens": 8192,
+    "max_tokens": 4096,
     "languages": [
-      "zh"
+      "zh",
+      "en"
     ],
-    "throttle_sec": 1,
-    "analysis_concurrency": 5,
-    "enrichment_concurrency": 5
+    "throttle_sec": 0
   },
   "email": {
     "enabled": false,
@@ -26,18 +24,18 @@
     "unsubscribe_keyword": "UNSUBSCRIBE"
   },
   "wechat": {
-    "enabled": true,
-    "webhook_key_env": "WECHAT_WEBHOOK_KEY",
-    "webhook_url": "http://119.23.238.217:8001/api/v1/webhook/send?key={webhook_key}",
+    "enabled": false,
+    "webhook_key": "WECHAT_WEBHOOK_KEY",
+    "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={webhook_key}",
     "receivers": [
       {
-        "type": "friend",
-        "name": "汉平",
+        "type": "user",
+        "name": "User Name",
         "id": "user_id"
       },
       {
         "type": "group",
-        "name": "A9计划冲冲冲",
+        "name": "Group Name",
         "id": "group_id",
         "mentioned_list": ["@all"]
       }
@@ -47,117 +45,34 @@
     "github": [
       {
         "type": "user_events",
-        "username": "karpathy",
+        "username": "torvalds",
         "enabled": true
       },
       {
         "type": "repo_releases",
-        "owner": "vllm-project",
-        "repo": "vllm",
-        "enabled": true
-      },
-      {
-        "type": "repo_releases",
-        "owner": "sgl-project",
-        "repo": "sglang",
-        "enabled": true
-      },
-      {
-        "type": "repo_releases",
-        "owner": "triton-lang",
-        "repo": "triton",
+        "owner": "astral-sh",
+        "repo": "uv",
         "enabled": true
       }
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 30,
-      "min_score": 150
-    },
-    "producthunt": {
-      "enabled": true,
-      "fetch_limit": 10
-    },
-    "weibo": {
-      "enabled": true,
-      "fetch_limit": 20
+      "fetch_top_stories": 20,
+      "min_score": 100
     },
     "rss": [
       {
         "name": "Simon Willison",
         "url": "https://simonwillison.net/atom/everything/",
         "enabled": true,
-        "category": "ai-tools"
+        "category": "ai-tools",
+        "fetch_limit": 10
       },
       {
-        "name": "AI Hot",
-        "url": "https://aihot.virxact.com/feed/all.xml",
-        "enabled": true,
-        "category": "ai-news",
-        "fetch_limit": 20
-      },
-      {
-        "name": "GitHub Trending - Daily",
-        "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
-        "enabled": true,
-        "category": "github-trending"
-      },
-      {
-        "name": "LWN.net",
+        "name": "LWN.net (subscriber full-text)",
         "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
         "enabled": false,
-        "category": "linux-kernel"
-      },
-      {
-        "name": "Long-Term Winning Index Investing",
-        "url": "https://wechat2rss.xlab.app/feed/1f35edb36dfda13906f958fc3047e59ce9c234fe.xml",
-        "enabled": false,
-        "category": "investment"
-      },
-      {
-        "name": "36kr",
-        "url": "https://www.36kr.com/feed",
-        "enabled": true,
-        "category": "tech-news",
-        "fetch_limit": 10
-      },
-      {
-        "name": "The Paper",
-        "url": "https://www.thepaper.cn/feed",
-        "enabled": true,
-        "category": "tech-news"
-      },
-      {
-        "name": "zhihu",
-        "url": "https://www.zhihu.com/rss",
-        "enabled": true,
-        "category": "tech-news"
-      },
-      {
-        "name": "ruanyifeng",
-        "url": "https://www.ruanyifeng.com/blog/atom.xml",
-        "enabled": false,
-        "category": "tech-news"
-      },
-      {
-        "name": "V2EX",
-        "url": "https://v2ex.com/index.xml",
-        "enabled": true,
-        "category": "tech-news",
-        "fetch_limit": 10
-      },
-      {
-        "name": "huxiu",
-        "url": "https://www.huxiu.com/rss/0.xml",
-        "enabled": true,
-        "category": "tech-news"
-      },
-      {
-        "name": "IT HOME",
-        "url": "https://www.ithome.com/rss/",
-        "enabled": true,
-        "category": "tech-news",
-        "fetch_limit": 20
+        "category": "linux"
       }
     ],
     "reddit": {
@@ -169,99 +84,31 @@
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "LocalLLaMA",
-          "enabled": true,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "SideProject",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "indiehackers",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "wallstreetbets",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "investing",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "CryptoCurrency",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "PersonalFinance",
-          "enabled": false,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
+          "min_score": 50
         }
       ],
-      "users": [],
-      "fetch_comments": 10
-    },
-    "telegram": {
-      "enabled": true,
-      "channels": [
+      "users": [
         {
-          "channel": "zaihuapd",
+          "username": "iamthatis",
           "enabled": true,
-          "fetch_limit": 20
+          "sort": "new",
+          "fetch_limit": 10
         }
-      ]
+      ],
+      "fetch_comments": 5
+    },
+    "producthunt": {
+      "enabled": true,
+      "fetch_limit": 10
+    },
+    "weibo": {
+      "enabled": true,
+      "fetch_limit": 20
     },
     "twitter": {
-      "enabled": true,
-      "actor_id": "EvFXOhwR6wsOWmdSK",
-      "users": [
-        "karpathy",
-        "sama",
-        "ylecun",
-        "DarioAmodei",
-        "demishassabis",
-        "DrJimFan",
-        "ilyasut",
-        "fchollet",
-        "AndrewYNg",
-        "swyx",
-        "simonw",
-        "hardmaru",
-        "levelsio",
-        "rowancheung",
-        "araborov"
-      ],
-      "fetch_limit": 3,
+      "enabled": false,
+      "users": ["karpathy", "ylecun"],
+      "fetch_limit": 10,
       "fetch_reply_text": false,
       "max_replies_per_tweet": 3,
       "max_tweets_to_expand": 10,
@@ -269,20 +116,18 @@
     }
   },
   "filtering": {
-    "ai_score_threshold": 8.0,
+    "ai_score_threshold": 6.0,
     "time_window_hours": 24
   },
   "webhook": {
     "enabled": false,
     "url_env": "HORIZON_WEBHOOK_URL",
-    "delivery": "summary_and_items",
-    "overview_position": "last",
-    "platform": "feishu",
-    "layout": "collapsible",
+    "delivery": "summary",
+    "overview_position": "first",
+    "platform": "generic",
+    "layout": "markdown",
     "fallback_layout": "markdown",
-    "languages": [
-      "zh"
-    ],
+    "languages": null,
     "request_body": {
       "msg_type": "interactive",
       "card": {
@@ -293,12 +138,19 @@
         "header": {
           "title": {
             "tag": "plain_text",
-            "content": "Horizon #{date}日报"
+            "content": "#{message_title}"
           },
           "template": "blue"
         },
         "body": {
           "elements": [
+            {
+              "tag": "markdown",
+              "content": "Horizon生成结果: #{result}\nHorizon日报重要资讯数量: #{important_items}/#{all_items}"
+            },
+            {
+              "tag": "hr"
+            },
             {
               "tag": "markdown",
               "content": "#{summary}"

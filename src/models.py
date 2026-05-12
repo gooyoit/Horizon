@@ -42,12 +42,10 @@ class AIProvider(str, Enum):
     """Supported AI providers."""
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
-    AZURE = "azure"
     ALI = "ali"
     GEMINI = "gemini"
     DOUBAO = "doubao"
     MINIMAX = "minimax"
-    DEEPSEEK = "deepseek"
 
 
 class AIConfig(BaseModel):
@@ -60,12 +58,7 @@ class AIConfig(BaseModel):
     temperature: float = 0.3
     max_tokens: int = 4096
     throttle_sec: float = 0.0
-    analysis_concurrency: int = 1
-    enrichment_concurrency: int = 1
     languages: List[str] = Field(default_factory=lambda: ["en"])
-    # Azure OpenAI specific; required when provider == AZURE
-    azure_endpoint_env: Optional[str] = None
-    api_version: Optional[str] = None
 
 
 class GitHubSourceConfig(BaseModel):
@@ -194,10 +187,8 @@ class EmailConfig(BaseModel):
     """Email configuration for updates/subscriptions."""
     imap_server: str
     imap_port: int = 993
-    imap_enabled: bool = True
     smtp_server: str
     smtp_port: int = 465
-    smtp_username: Optional[str] = None
     email_address: str
     password_env: str = "EMAIL_PASSWORD"
     sender_name: str = "Horizon Daily"
