@@ -10,7 +10,9 @@
     "languages": [
       "zh"
     ],
-    "throttle_sec": 1
+    "throttle_sec": 1,
+    "analysis_concurrency": 5,
+    "enrichment_concurrency": 5
   },
   "email": {
     "enabled": false,
